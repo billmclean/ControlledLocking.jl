@@ -1,0 +1,8 @@
+name = "ControlledLocking"
+uuid = "fd29e4d3-41dc-4518-bfd5-a7ef260c9a6a"
+authors = ["William McLean <w.mclean@unsw.edu.au>"]
+version = "0.1.0"
+
+[deps]
+SimpleFiniteElements = "125632e7-bef4-4648-bc1f-71b5efcf8068"
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
