@@ -1,24 +1,17 @@
 import ControlledLocking: optimal_α
 import ControlledLocking.Example2: numerical_solution, essential_bcs, 
                                    Lame_parameters, divergence,
-				   geometry_filename, diam_Ω
+				   geometry_filename, diam_Ω, λ, μ, g
 import SimpleFiniteElements.Elasticity: visualise_soln
 import SimpleFiniteElements.Utils: gmsh2pyplot
 using SimpleFiniteElements
 using PyPlot
 using Printf
 
-E = 1.0
-ν = 0.49999
-#ν = 0.45
-λ, μ = Lame_parameters(E, ν)
-c = 0.05
 @printf("Cooks membrane problem with\n")
-@printf("\tE = %g\n", E)
-@printf("\tν = %g\n", ν)
 @printf("\tλ = %g\n", λ)
 @printf("\tμ = %g\n", μ)
-@printf("Traction constant c = %g\n", c)
+@printf("Traction constant g = %g\n", g)
 
 path = joinpath("..", "spatial_domains", geometry_filename)
 gmodel = GeometryModel(path)
