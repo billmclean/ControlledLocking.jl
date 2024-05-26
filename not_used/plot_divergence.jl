@@ -9,8 +9,6 @@ using PyPlot
 using Printf
 
 @printf("Cooks membrane problem with\n")
-@printf("\tE = %g\n", E)
-@printf("\tν = %g\n", ν)
 @printf("\tλ = %g\n", λ)
 @printf("\tμ = %g\n", μ)
 @printf("Traction constant g = %g\n", g)
