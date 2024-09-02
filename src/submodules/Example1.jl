@@ -47,9 +47,9 @@ gD = SA[0.0, 0.0]
 const essential_bcs = [("Top", gD), ("Bottom", gD), ("Left", gD), ("Right", gD)]
 const μ = 1.0
 
-function numerical_solution(λ::Float64, α::Float64, dof::DegreesOfFreedom;
+function numerical_solution(λ::Float64, λₕ::Float64, dof::DegreesOfFreedom;
                             μ=1.0)
-    bilinear_forms = Dict("Omega" => [(∫∫λ_div_u_div_v!, λ^α),
+    bilinear_forms = Dict("Omega" => [(∫∫λ_div_u_div_v!, λₕ),
                                       (∫∫2μ_εu_εv!, μ)])
     linear_funcs = Dict("Omega" => (∫∫f_dot_v!, f, λ))
     u1h, u2h = elasticity_soln(dof, bilinear_forms, linear_funcs)
@@ -63,9 +63,9 @@ function numerical_errors(u1h, u2h, dof::DegreesOfFreedom, λ::Float64;
     return L2err, H1err
 end
 
-function numerical_errors(λ::Float64, α::Float64, dof::DegreesOfFreedom;
+function numerical_errors(λ::Float64, λₕ::Float64, dof::DegreesOfFreedom;
                           quadrature_level=2)
-    u1h, u2h, dof = numerical_solution(λ, α, dof)
+    u1h, u2h, dof = numerical_solution(λ, λₕ, dof)
     L2err, H1err = numerical_errors(u1h, u2h, dof, λ; 
 				    quadrature_level=quadrature_level)
     return L2err, H1err
