@@ -5,7 +5,7 @@ import SimpleFiniteElements.Elasticity: ∫∫f_dot_v!, ∫∫λ_div_u_div_v!,
                                        ∫∫2μ_εu_εv!, elasticity_soln, error_norms
 import StaticArrays: SA
 
-const diam_Ω = sqrt(2)
+const diam_Ω = sqrt(2) * π
 const geometry_filename = "square.geo"
 
 function exact_u(x, y, λ)
