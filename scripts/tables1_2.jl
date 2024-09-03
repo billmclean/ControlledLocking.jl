@@ -1,4 +1,4 @@
-import ControlledLocking: optimal_α
+import ControlledLocking: reduced_λ
 import ControlledLocking.Example1: numerical_errors, essential_bcs,
 				   geometry_filename, diam_Ω
 using SimpleFiniteElements
@@ -36,11 +36,12 @@ start = time()
 	    L2err[row,block,1], 
 	    H1err[row,block,1] = numerical_errors(λ[block], λ[block], dof[row]) 
 	else
-#	    λₕ[row,block] = λ[block] / ( 1 + λ[block] * h[row] / diam_Ω )
-            d = diam_Ω / h[row]
+	    λₕ[row,block] = reduced_λ(h[row], λ[block], diam_Ω)
+#		λ[block] / ( 1 + λ[block] * h[row] / diam_Ω )
+#            d = diam_Ω / h[row]
 #	    λₕ[row,block] = λ[block] > d ? d : λ[block]
-            α = min(1, log(d)/log(λ[block]))
-	    λₕ[row,block] = λ[block]^α
+#            α = min(1, log(d)/log(λ[block]))
+#	    λₕ[row,block] = λ[block]^α
 	    L2err[row,block,2], 
 	    H1err[row,block,2] = numerical_errors(
                                   λ[block], λₕ[row,block], dof[row]) 
@@ -74,10 +75,10 @@ function print_table(io::IO, err::Array{Float64},
     end
 end
 
-output_file = "table1_output.txt"
+output_file = "tables1_2_output.txt"
 @printf("Writing output to %s\n", output_file)
 open(output_file, "w") do io
-    @printf(io, "Output from table1.jl\n")
+    @printf(io, "Output from tables_1_2.jl\n")
     for block = 1:nblocks
         title = @sprintf("L2 errors, λ = %g", λ[block])
         print_table(io, L2err, block, title)

@@ -87,16 +87,23 @@ grant DP220101811.}}
 \begin{document}
 \maketitle
 \begin{abstract}
-{\color{red} Due to the divergence-instability, the accuracy of low-order conforming finite element methods (FEMs) for nearly incompressible elasticity equations deteriorates as the Lam\'e parameter~$\lambda\to\infty$ or the Poisson ratio $\nu \approx 1/2.$  This type of behavior, known as \emph{locking} or \emph{non-robustness} \cite{BabuskaSuri1992}, see the recent review paper \cite{AinsworthParker2022}  on the concept of locking in conforming FEMs to planar linear elasticity.} For the piecewise linear case, the error in the $L^2$-norm of the standard 
-Galerkin conforming FEM is bounded by~$C_\lambda h^2$. However, $C_\lambda \to \infty$ 
-as~$\lambda \to \infty$, resulting in poor accuracy for practical values of~$h$ if $\lambda$ is sufficiently 
-large. In this short paper, we show that for 2D problems the locking phenomenon can be controlled by replacing 
-$\lambda$ with $\lambda^\alpha$ in the stiffness matrix, for a certain choice of~$\alpha=\alpha_*(h,\lambda)$ 
-in the range~$0<\alpha\le 1$.  We prove that for
-this optimal choice of~$\alpha$, the error in the $L^2$-norm is bounded by~$Ch$ where $C$ does not
-depend on~$\lambda$.  Numerical experiments confirm the expected convergence behaviour and show that, for practical meshes, our  method is more accurate than the standard method if the material is 
-nearly incompressible.  Our analysis also shows that the error in the $H^1$-norm is bounded by $Ch^{1/2}$,
-but our numerical experiments suggest that this bound is not sharp.
+Due to the divergence-instability, the accuracy of low-order
+conforming finite element methods (FEMs) for nearly incompressible elasticity
+equations deteriorates as the Lam\'e parameter~$\lambda\to\infty$, or
+equivalently as the Poisson ratio $\nu\to1/2$.  This effect is known
+as \emph{locking} or \emph{non-robustness}. For the piecewise linear case, the
+error in the $L^2$-norm of the standard Galerkin conforming FEM is bounded
+by~$C\lambda h^2$, resulting in poor accuracy for practical values of~$h$ if
+$\lambda$ is sufficiently large. In this short paper, we show that for 2D
+problems the locking phenomenon can be controlled by replacing
+$\lambda$ with~$\lambda_h=\lambda/(1+\lambda h)$ in the stiffness matrix. We
+prove that with this modification, the error in the $L^2$-norm is bounded
+by~$Ch$ for a constant $C$ that does not depend on~$\lambda$.  Numerical
+experiments confirm this convergence behaviour and show that, for
+practical meshes, our  method is more accurate than the standard method if the
+material is nearly incompressible.  Our analysis also shows that the error in
+the $H^1$-norm is bounded by $Ch^{1/2}$, but our numerical experiments suggest
+that this bound is not sharp.
 \end{abstract}
 \section{Introduction}
 
@@ -105,31 +112,67 @@ Consider the following linear elasticity equation
  -\nabla \cdot \vsigma(\vu(\bsx)) = \vf(\bsx) \quad \text{for $\bsx \in \Omega\subseteq\R^2$,}
 \label{eq:L1}
 \end{equation}
-subject to homogeneous Dirichlet boundary conditions $\vu = {\bf 0}$ on the polygonal 
-boundary~$\Gamma:=\partial \Omega$. The   Cauchy stress 
+subject to homogeneous Dirichlet boundary conditions $\vu = {\bf 0}$ on the
+polygonal boundary~$\Gamma:=\partial \Omega$. The   Cauchy stress
 tensor~$\vsigma \in [L^2(\Omega)]^{2\times 2}$ is defined as 
 \[\vsigma(\vu) = \lambda \nabla\cdot \vu\, {\bf I} 
 + 2\mu \veps(\vu)\quad\text{on $\Omega$,} \] 
 with $\vu$ being the displacement vector field and the symmetric strain 
-tensor~$\veps(\vu) := \frac{1}{2} (\nabla \vu + (\nabla \vu)^T)$.
-Here, $\vf$ is the body force per unit volume, and ${\bf I}$ is the identity tensor.   The gradient ($\nabla$) and the divergence ($\nabla \cdot$) are understood to be with respect to the physical variable $\bsx \in \Omega$.  The constant  Lam\'e parameters  $\mu$ and $\lambda$ are strictly positive, and we are interested in the case when the Poisson ratio~$\nu$ of the elastic material approaches~$1/2$.  Thus,  $\lambda$ is large and we are dealing with a nearly incompressible material. {\color{red} In this case, It is known that the convergence rate may deteriorate (as it depends on $\lambda$) when conforming FEMs are employed to approximate the solution of~\eqref{eq:L1}. This issue is commonly referred to as locking by engineers. It has been shown that locking is absent for polynomials of degree ~$\ge 4$ on a triangular mesh~\cite{ScottVogelius1985}. However, on quadrilateral meshes, it was shown that locking cannot be  avoided for any polynomial of degree~$\ge 1$~\cite{BabuskaSuri1992}. Moreover, as illustrated in \cite[Figures 4a and 4b]{AinsworthParker2022},  randomly perturbing some nodes and rerunning  the  analysis can still result in locking in the approximation of the stresses, even for the fourth order elements.} In a related result,  Vogelius~\cite{Vogelius1983} proved that the $p$-version of the conforming FEM on smooth domains is  unaffected by locking. 
+tensor~$\veps(\vu) := \frac{1}{2} (\nabla \vu + (\nabla \vu)^T)$. Here, $\vf$ is
+the body force per unit volume, and ${\bf I}$ is the identity tensor.   The
+gradient ($\nabla$) and the divergence ($\nabla \cdot$) are understood to be
+with respect to the physical variable~$\bsx \in \Omega$.  The constant Lam\'e
+parameters, $\mu$~and $\lambda$, are strictly positive, and we are interested
+in the case when the Poisson ratio~$\nu$ of the elastic material
+approaches~$1/2$.  Thus, $\lambda$ is large and we are dealing with a nearly
+incompressible material. {\color{red} In this case, it is known that the
+convergence rate may deteriorate (as it depends on $\lambda$) when conforming
+FEMs are employed to approximate the solution of~\eqref{eq:L1}. This issue is
+commonly referred to as locking. It has been shown that locking is absent for
+polynomials of degree~$\ge 4$ on a triangular mesh~\cite{ScottVogelius1985}.
+However, on quadrilateral meshes, locking cannot be  avoided for any polynomial
+of degree~$\ge1$~\cite{BabuskaSuri1992}.  In a related result,
+Vogelius~\cite{Vogelius1983} proved that the $p$-version of the conforming FEM
+on smooth domains is  unaffected by locking. The survey paper of Ainsworth and
+Parker~\cite{AinsworthParker2022} illustrates and analyses some of the
+surprising effects that can occur when $\lambda$ is very large.}
 
+The locking phenomenon in conforming FEMs has motivated researchers to explore
+and develop various  locking-free numerical methods ($h$-, $p$-, and
+$hp$-versions, low-order, and high-order) for solving the nearly incompressible
+elasticity equation~\eqref{eq:L1}. These methods include  nonconforming FEMs
+\cite{ArnoldAwanouWinther2014,BrennerSung1992,ChenRenMao2010,Falk1991,
+LeeLeeSheen2003,MaoChen2008,YangChen2010}, conforming-nonconforming mixed
+FEMs~\cite{BoffiBrezziFortin2013,
+GopalakrishnanGuzman2011,HuShi2008,ZhangZhaoChenYang2018}, the weak Galerkin
+FEM~\cite{ChenXie2016,
+HuoWangWangZhang2020,HuoWangWangZhang2023,LiuWang2022,WangWangWangZhang2016},
+the discontinuous Petrov--Galerkin
+method~\cite{BramwellDemkowiczGopalakrishnanQiu2012}, the discontinuous Galerkin
+method (with hybridization)~\cite{CockburnSchotzauWang2006,DiPietroNicaise2013,
+HansboLarson2002,SoonCockburnStolarski2009,Wihler2006}, and the virtual element
+ method~\cite{EdoardoStefanoCarloLuca2020,HuangLinYu2022,VeigaBrezziMarini2013,
+ZhangZhaoYangChen2019,ZhaoWangZhang2022}.  It is worth mentioning that most of
+these methods are more complicated, both computationally and in their analysis,
+than the conforming FEM. Furthermore, these methods become more complicated or
+not applicable for the case of an inhomogeneous material, where the Lam\'e
+parameters are functions of~$\bsx$.
 
-The locking phenomenon~\cite{AinsworthParker2022} in conforming FEMs has motivated researchers to explore 
-and develop various  locking-free numerical methods ($h$-, $p$-, and $hp$-versions, low-order, and 
-high-order) for solving the nearly incompressible elasticity equation~\eqref{eq:L1}. These methods include  nonconforming FEMs \cite{ArnoldAwanouWinther2014,BrennerSung1992,ChenRenMao2010,Falk1991,
-LeeLeeSheen2003,MaoChen2008,YangChen2010}, conforming-nonconforming mixed FEMs~\cite{BoffiBrezziFortin2013, 
-GopalakrishnanGuzmán2011,HuShi2008,ZhangZhaoChenYang2018}, the weak Galerkin FEM~\cite{ChenXie2016,
-HuoWangWangZhang2020,HuoWangWangZhang2023,LiuWang2022,WangWangWangZhang2016}, the discontinuous 
-Petrov--Galerkin method~\cite{BramwellDemkowiczGopalakrishnanQiu2012}, the discontinuous Galerkin method 
-(with hybridization)~\cite{CockburnSchotzauWang2006,DiPietroNicaise2013,HansboLarson2002,
-SoonCockburnStolarski2009,Wihler2006}, and the virtual element  method~\cite{EdoardoStefanoCarloLuca2020,HuangLinYu2022,VeigaBrezziMarini2013,ZhangZhaoYangChen2019,
-ZhaoWangZhang2022}.  It is worth mentioning that most of these methods are more complicated both 
-computationally and in their analysis than the conforming FEM. Furthermore, these methods become more  complicated or not applicable for the case of an inhomogeneous material, where the Lam\'e parameters are functions of~$\bsx$.
+{\color{red}  Another approach that might be used to avoid locking in the
+conforming linear FEM is the so-called reduced integration technique
+\cite{HughesCohenHaroun1978,MalkusHughes1978}, in which a finite element
+interpolation operator~$\Pi$ has the property~$\nabla\cdot(\Pi \vv)=0$ in
+a weak sense whenever $\nabla\cdot\vv=0$.  The same procedure was used in
+for the case of a pure traction problem~\cite{BrennerSung1992}. Again,
+extending this approach for the case of an inhomogeneous nearly incompressible
+material is not feasible.}
 
-{\color{red}  Another approach that might be used to avoid the locking in the conforming linear FEM is the so-called reduced integration technique \cite{HughesCohenHaroun1978,MalkusHughes1978}, where the property $\nabla \cdot \vv =0 \implies \nabla \cdot (\Pi \vv)=0$ holds true  in a weak sense, for some  finite element interpolation operator $\Pi$.   This procedure  was used in \cite{BrennerSung1992} for the case of   pure traction problem. Again, extending this approach for the case of an inhomogeneous nearly incompressible material is not feasible.}
-
-The aim of this work is to demonstrate that the locking phenomenon in the  popular piecewise linear conforming FEM can be avoided with a slight modification of the scheme. More precisely, we replace the Lam\'e parameter~$\lambda$ with~$\lambda^\alpha$ in the standard conforming FEM, where $0 < \alpha \leq 1$. The  mechanism for choosing the optimal value~$\alpha=\alpha_*(h,\lambda)$ depends on the finite element mesh  size~$h$, the Lam\'e parameter~$\lambda$ and on  diameter~$d_\Omega$ of $\Omega$.  Although most of our analysis is independent of the dimension, we need to assume that $\Omega\subseteq\mathbb{R}^2$ so that we can apply certain $H^2$-regularity results
+The aim of the present work is to demonstrate that the locking phenomenon in
+the popular piecewise linear conforming FEM can be avoided by replacing
+the Lam\'e parameter~$\lambda$ with~$\lambda_h=\lambda/(1+\lambda h)$ in the
+stiffness matrix.  Although most of our analysis is independent of the
+dimension, we need to assume that $\Omega\subseteq\mathbb{R}^2$ so that we can
+apply certain $H^2$-regularity results
 of Brenner~and Sung~\cite{BrennerSung1992}.
 
 In the next section, we succinctly discuss the weak formulation of Problem~\eqref{eq:L1} and the well-posedness of the modified conforming FEM. In Section \ref{ConvAna}, we demonstrate that the 
@@ -209,14 +252,13 @@ that is,
 \calB_h(\vu,\vv)=\int_\Omega[2\mu\,\veps(\vu):\veps(\vv)
     +\lambda_h(\nabla\cdot\vu)(\nabla\cdot\vv)]\,\ud\bsx,
 \end{equation*} 
-for an appropriately chosen constant~$\lambda_h$ that depends on $\lambda$~and
-$h$; see Theorem~\ref{Convergence theorem} below. The existence and uniqueness
-of the solution~$\vu_h$ of~\eqref{FEM new} is guaranteed because the
+for $\lambda_h$ given by~\eqref{eq: lambda_h} below. The existence and
+uniqueness of the solution~$\vu_h$ of~\eqref{FEM new} is guaranteed because the
 operator $\calB_h$ is bounded and positive-definite on~$\vV_h$.
 
 \section{Convergence analysis}\label{ConvAna}
 For the error analysis, we use a projection operator $\Pi_h: \vV \to \vV_h$ with
-the following error estimate properties:
+the approximation property:
 \begin{equation}
     \label{projection estimate}\|\vv-\Pi_h \vv\|+h\|\nabla (\vv-\Pi_h \vv)\| \le C h^2 \|\vv\|_{\bf H}\,.
     \end{equation}
@@ -243,8 +285,8 @@ of $\lambda$~and $h$, such that
 \[
 \|\vu-\vu_h\|_{\calB_h}\le Ch^{1/2}\|\vf\|.
 \]
-Moreover, if $\calL:{\bf L}^2(\Omega) \to \R$ is a bounded  linear functional
-(that is, $|\calL(\vw)|\le \|\calL\|\,\|\vw\|$), then
+Moreover, if $\calL:{\bf L}^2(\Omega) \to \R$ is a bounded  linear functional,
+so that $|\calL(\vw)|\le \|\calL\|\,\|\vw\|$, then
 \begin{equation}\label{convergence calL}
 |\calL(\vu_h)-\calL(\vu)|\le C(h+\lambda^{-1})\|\vf\|\|\calL\|.
 \end{equation}
@@ -286,13 +328,13 @@ $\lambda_h h^2=(\lambda-\lambda_h)^2\lambda_h^{-1}\lambda^{-2}
 \begin{equation}\label{eq: uh Pih u}
 \|\vu_h-\Pi_h \vu\|_{\calB_h}^2 \le Ch\|\vf\|^2.
 \end{equation}
-Using this  together with \eqref{projection estimate Bh}, shows
+Using this inequality together with~\eqref{projection estimate Bh} shows
 \begin{equation}\label{h1 error}
    \|\vu-\vu_h\|_{\calB_h}^2 \le Ch\|\vf\|^2.
 \end{equation}
-%Now, if $\lambda \le d_\Omega/h$, we simply repeat the above steps with~$\alpha=1$ (that is, standard conforming FEM) and arrive at the same bound.
 
-To show the second estimate, we replace $\ell$ with~$\calL$ in \eqref{para weak}, and then, by 
+To show the second estimate~\eqref{convergence calL}, we replace $\ell$
+with~$\calL$ in \eqref{para weak}, and then, by
 Theorem~\ref{thm: unique solution}, there exists a unique~$\vu_{\calL} \in \vV$ satisfying
 \begin{equation}\label{weak form uL}
 \calB(\vu_{\calL}, \vv) = \calL(\vv)\quad\text{for all $\vv \in \vV$.}
@@ -403,9 +445,9 @@ implying the second estimate.
 \end{proof}
 
 \begin{remark}
-If, instead of~\eqref{eq: lambda_h}, we set $\lambda_h=\lambda$, so
-that $\calB_h=\calB$ and $\vu_h$ is the usual (unmodified) finite
-element solution, then the arguments above simplify to yield the bounds
+If we compute $\vu_h$ using the unmodified bilinear form~$\calB$, or in other
+words, if $\vu_h$ is the usual finite element solution, then the arguments above
+simplify to yield the bounds
 \[
 \|\vu_h-\vu\|_{\calB}\le\|\vu-\Pi_h\vu\|_{\calB}
 \le C\lambda^{1/2}h\|\vf\|
@@ -459,13 +501,25 @@ In this remark, we discuss the case of inhomogenous elastic material that is nea
 Let $\nu_{\min}$ and $\nu_{\max}$ be such that $\nu_{\min}\le \nu(\bsx)\le \nu_{\max}$ for $\bsx \in \Omega.$ Since the Poisson ratio function  $\nu(\bsx)$ approaches $1/2$ (nearly incompressible material), we expect the constants $\nu_{\min}$ and $\nu_{\max}$ to be both closed to $1/2.$ Let $\Lambda =\frac{1}{1-2\nu_{\max}}$ and so, 
 \[\lambda= \Lambda \widehat \lambda,\quad{\rm where}~~ \widehat \lambda (\bsx)=\frac{E(\bsx)\nu}{1+\nu}\frac{1-2\nu_{\max}}{1-2\nu}.\]
 Indeed, the constant factor $\Lambda$   is expected to be very large (and approaches  infinity for materials which are increasingly incompressible).
- We assume that $0<E_{\min}\le E\le E_{\max}<\infty$  for some positive constants $E_{\min}$ and $E_{\max}$. The regularity results in Theorem \ref{thm: unique solution} remains valid in this case with $\Lambda$ in place of $\lambda$, where  the constant~$C$ depends on~$\Omega$, $\mu$ and $\widehat \lambda$, but is independent of~$\Lambda$; see Dick et al.~\cite[Theorem 3.2]{Dicketal2024}.   }
-
+ We assume that $0<E_{\min}\le E\le E_{\max}<\infty$  for some positive
+constants $E_{\min}$ and $E_{\max}$. The regularity results in Theorem \ref{thm:
+unique solution} remains valid in this case with $\Lambda$ in place of
+$\lambda$, where  the constant~$C$ depends on~$\Omega$, $\mu$ and $\widehat
+\lambda$, but is independent of~$\Lambda$; see Dick et al.~\cite[Theorem
+3.2]{Dicketal2024}.
 We define the modified conforming FEM as in  \eqref{FEM new} with  
 \begin{equation*}
-\calB^\alpha(\vu,\vv)=\int_\Omega[2\mu\,\veps(\vu):\veps(\vv)+\Lambda^\alpha \widehat \lambda  (\nabla\cdot\vu)(\nabla\cdot\vv)]\,\ud\bsx.
+\calB_h(\vu,\vv)=\int_\Omega[2\mu\,\veps(\vu):\veps(\vv)+\Lambda_h
+\widehat \lambda  (\nabla\cdot\vu)(\nabla\cdot\vv)]\,\ud\bsx.
 \end{equation*} 
-For the convergence results, we replace $\lambda$ with $\Lambda$ in the statements of Theorem \ref {Convergence theorem} and Corollary \ref{cor: L2 H1 errors}. In the proof of Theorem \ref {Convergence theorem}, we replace $\lambda$ with $\Lambda$ in: (1) the functions $\phi,\psi,$ and $\chi,$ (2) the text before \eqref{eq: uh Pih u} and after \eqref{h1 error}, and (3) the material after \eqref{change in lambda 2}.   
+For the convergence results, we replace $\lambda_h$ with $\Lambda_h$ in the
+statements of Theorem~\ref{Convergence theorem} and
+Corollary~\ref{cor: L2 H1 errors}.}
+%In the proof of
+%Theorem~\ref {Convergence theorem}, we replace $\lambda$ with $\Lambda$ in:
+%(1) the functions $\phi,\psi,$ and $\chi,$ (2) the text before \eqref{eq: uh
+%Pih u} and after \eqref{h1 error}, and (3) the material after \eqref{change in
+%lambda 2}.
 
 
 \end{remark}
@@ -474,26 +528,44 @@ For the convergence results, we replace $\lambda$ with $\Lambda$ in the statemen
 \section{Numerical experiments}\label{Sec: Numeric}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In this section, we illustrate the theoretical convergence results. Based on 
-Corollary~\ref{cor: L2 H1 errors}, we expect to observe $O(h)$~and $O(h^{1/2})$ convergence rates 
-in the ${\bf L}^2(\Omega)$-norm for ${\bf u}$ and $\nabla {\bf u}$, 
-respectively, uniformly in~$\lambda$, 
-provided that all the imposed assumptions are  satisfied.   The Julia code used in these experiments is available online~\cite{McLean2024}.
+Corollary~\ref{cor: L2 H1 errors}, we expect to observe $O(h)$~and $O(h^{1/2})$
+convergence rates in the ${\bf L}^2(\Omega)$-norm for ${\bf u}$~and
+$\nabla\mathbf{u}$, respectively, uniformly in~$\lambda$, provided that all the
+imposed assumptions are  satisfied.   The Julia code used in these experiments
+is available online~\cite{McLean2024}.  We found it best to modify the
+definition~\eqref{eq: lambda_h} of~$\lambda_h$ by scaling the mesh size~$h$ to
+the diameter~$d_\Omega$ of~$\Omega$, setting
+\begin{equation}\label{eq: lambda_h d_Omega}
+\lambda_h=\frac{\lambda}{1+\lambda h/d_\Omega}.
+\end{equation}
 
-\paragraph{Example 1.} We chose  $\Omega=(0,\pi)^2$ and chose the body force so that the exact solution is
-\[\vu(\boldsymbol{x})=\begin{bmatrix}  u_1(x_1,x_2)\\  u_2(x_1,x_2)\end{bmatrix}
-=\begin{bmatrix} \bigl(\cos(2x_1)-1\bigr)\sin(2x_2)\\ \bigl(1-\cos(2x_2)\bigr)\sin(2x_1)
-\end{bmatrix} +\frac{\sin(x_1)\sin(x_2)}{\lambda}\begin{bmatrix}1\\ 1\end{bmatrix},\quad \bsx=(x_1,x_2).\] 
-Notice $\vu=\mathbf{0}$ on~$\partial\Omega$.  We used a family of unstructured triangulations obtained by
-uniform refinement of an initial coarse mesh.   Table \ref{tab: L2 errors} compares  the errors and
-convergence rates in the ${\bf L^2}(\Omega)$-norm of the standard conforming, piecewise-linear Galerkin FEM ($\alpha=1$) with our  conforming scheme ($\alpha=\alpha_*(h,\lambda)$ from Theorem~\ref{Convergence theorem}).  The number of unknowns in the 
-linear system for each mesh is denoted by~$N_h$.  As~$\lambda$ increases from~$1{,}000$ to~$10{,}000$ 
-to~$100{,}000$ the material becomes more nearly incompressible and, as expected, the standard 
-method exhibits poor convergence. By contrast, our new method achieves $O(h)$ convergence uniformly 
+\paragraph{Example 1.} We chose  $\Omega=(0,\pi)^2$ and chose the body force so
+that the exact solution is
+\[
+\vu(\boldsymbol{x})=\begin{bmatrix}  u_1(x_1,x_2)\\  u_2(x_1,x_2)\end{bmatrix}
+=\begin{bmatrix}
+\bigl(\cos(2x_1)-1\bigr)\sin(2x_2)\\ \bigl(1-\cos(2x_2)\bigr)\sin(2x_1)
+\end{bmatrix}
++\frac{\sin(x_1)\sin(x_2)}{\lambda}\begin{bmatrix}1\\ 1\end{bmatrix},
+\quad\bsx=(x_1,x_2).
+\]
+Notice $\vu=\mathbf{0}$ on~$\partial\Omega$.  We used a family of unstructured
+triangulations obtained by uniform refinement of an initial coarse mesh.
+Table~\ref{tab: L2 errors} compares the errors and convergence rates in the
+${\bf L^2}(\Omega)$-norm of the standard conforming, piecewise-linear
+Galerkin FEM (using the original bilinear form~$\calB$) with our modified
+conforming scheme~\eqref{FEM new} (using $\calB_h$ depending on~$\lambda_h$).
+The number of unknowns in the linear system for each mesh is denoted by~$N_h$.
+As~$\lambda$ increases from~$100$ to~$100{,}000$ the material becomes more
+nearly incompressible and, as expected, the standard method exhibits poor
+convergence. By contrast, our new method achieves $O(h)$ convergence uniformly
 in~$\lambda$.
    
-Table~\ref{tab: H1 errors} compares the errors in $\nabla {\bf u}$  for the two methods.  Once again, our new
-method is more accurate. In fact, it seems to achieve $O(h)$ convergence, implying that the second error 
-bound in  Corollary~\ref{cor: L2 H1 errors} is not sharp.
+Table~\ref{tab: H1 errors} compares the errors in~$\nabla {\bf u}$  for the two
+methods.  Once again, our new method is more accurate. In fact, it seems to
+achieve $O(h)$ convergence, implying that the second error bound in
+Corollary~\ref{cor: L2 H1 errors} is not sharp.
+
 \begin{table}
 %\newcommand{\Error}{\textrm{Error}}
 \newcommand{\Error}{$\|\vu-\vu_h\|$}
@@ -505,41 +577,53 @@ bound in  Corollary~\ref{cor: L2 H1 errors} is not sharp.
 \texttt{
 \begin{tabular}{rc|cc|ccc}
 \\\hline
-\multicolumn{2}{c|}{$\lambda=1{,}000$}&\multicolumn{2}{c|}{$\alpha=1$}&
-\multicolumn{3}{c}{$\alpha=\alpha_*(h,\lambda)$}\\
+\multicolumn{2}{c|}{$\lambda=100$}&\multicolumn{2}{c|}{$\calB$}&
+\multicolumn{3}{c}{$\calB_h$}\\
 \hline
-$N_h$&$h$&\Error&\Rate&\Error&\Rate&$\alpha$\\
+$N_h$&$h$&\Error&\Rate&\Error&\Rate&$\lambda_h$\\
 \hline
-%   132& 0.478& 3.60e+00&      &   8.49e-01&      & 0.323 \\
-   586& 0.239& 2.96e+00& 0.283&   3.67e-01& 1.209& 0.423 \\
-  2466& 0.119& 1.76e+00& 0.748&   1.68e-01& 1.129& 0.524 \\
- 10114& 0.060& 7.02e-01& 1.326&   8.01e-02& 1.067& 0.624 \\
- 40962& 0.030& 2.15e-01& 1.706&   3.90e-02& 1.039& 0.724 \\
-164866& 0.015& 5.86e-02& 1.877&   1.90e-02& 1.034& 0.825 \\
+%  132& 0.478& 2.37e+00&      &   8.20e-01&      &   8.5 \\
+   586& 0.239& 1.07e+00& 1.146&   3.34e-01& 1.296&  15.7 \\
+  2466& 0.119& 3.50e-01& 1.612&   1.36e-01& 1.291&  27.1 \\
+ 10114& 0.060& 9.79e-02& 1.838&   5.46e-02& 1.321&  42.7 \\
+ 40962& 0.030& 2.56e-02& 1.933&   2.14e-02& 1.353&  59.8 \\
+164866& 0.015& 6.52e-03& 1.975&   8.64e-03& 1.307&  74.9 \\
 \hline\\\hline
-\multicolumn{2}{c|}{$\lambda=10{,}000$}&\multicolumn{2}{c|}{$\alpha=1$}&
-\multicolumn{3}{c}{$\alpha=\alpha_*(h,\lambda)$}\\
+\multicolumn{2}{c|}{$\lambda=1{,}000$}&\multicolumn{2}{c|}{$\calB$}&
+\multicolumn{3}{c}{$\calB_h$}\\
 \hline
-$N_h$&$h$&\Error&\Rate&\Error&\Rate&$\alpha$\\
+$N_h$&$h$&\Error&\Rate&\Error&\Rate&$\lambda_h$\\
 \hline
-%   132& 0.478& 3.82e+00&      &   8.49e-01&      & 0.242 \\
-   586& 0.239& 3.73e+00& 0.034&   3.68e-01& 1.208& 0.317 \\
-  2466& 0.119& 3.42e+00& 0.127&   1.68e-01& 1.126& 0.393 \\
- 10114& 0.060& 2.57e+00& 0.409&   8.07e-02& 1.061& 0.468 \\
- 40962& 0.030& 1.33e+00& 0.949&   3.96e-02& 1.026& 0.543 \\
-164866& 0.015& 4.77e-01& 1.484&   1.97e-02& 1.012& 0.618 \\
+%  132& 0.478& 3.60e+00&      &   8.46e-01&      &   9.2 \\
+   586& 0.239& 2.96e+00& 0.283&   3.64e-01& 1.218&  18.3 \\
+  2466& 0.119& 1.76e+00& 0.748&   1.64e-01& 1.146&  35.9 \\
+ 10114& 0.060& 7.02e-01& 1.326&   7.65e-02& 1.102&  69.3 \\
+ 40962& 0.030& 2.15e-01& 1.706&   3.56e-02& 1.105& 129.6 \\
+164866& 0.015& 5.86e-02& 1.877&   1.60e-02& 1.150& 229.4 \\
 \hline\\\hline
-\multicolumn{2}{c|}{$\lambda=100{,}000$}&\multicolumn{2}{c|}{$\alpha=1$}&
-\multicolumn{3}{c}{$\alpha=\alpha_*(h,\lambda)$}\\
+\multicolumn{2}{c|}{$\lambda=10{,}000$}&
+\multicolumn{2}{c|}{$\calB$}&\multicolumn{3}{c}{$\calB_h$}\\
 \hline
-$N_h$&$h$&\Error&\Rate&\Error&\Rate&$\alpha$\\
+$N_h$&$h$&\Error&\Rate&\Error&\Rate&$\lambda_h$\\
 \hline
-%   132& 0.478& 3.84e+00&      &   8.49e-01&      & 0.194 \\
-   586& 0.239& 3.84e+00& 0.003&   3.68e-01& 1.208& 0.254 \\
-  2466& 0.119& 3.80e+00& 0.014&   1.68e-01& 1.125& 0.314 \\
- 10114& 0.060& 3.66e+00& 0.054&   8.08e-02& 1.060& 0.374 \\
- 40962& 0.030& 3.20e+00& 0.194&   3.97e-02& 1.025& 0.435 \\
-164866& 0.015& 2.16e+00& 0.569&   1.97e-02& 1.009& 0.495 \\
+%  132& 0.478& 3.82e+00&      &   8.49e-01&      &   9.3 \\
+   586& 0.239& 3.73e+00& 0.034&   3.67e-01& 1.209&  18.6 \\
+  2466& 0.119& 3.42e+00& 0.127&   1.68e-01& 1.127&  37.1 \\
+ 10114& 0.060& 2.57e+00& 0.409&   8.04e-02& 1.065&  73.9 \\
+ 40962& 0.030& 1.33e+00& 0.949&   3.92e-02& 1.034& 146.7 \\
+164866& 0.015& 4.77e-01& 1.484&   1.93e-02& 1.027& 289.1 \\
+\hline\\\hline
+\multicolumn{2}{c|}{$\lambda=100{,}000$}&
+\multicolumn{2}{c|}{$\calB$}&\multicolumn{3}{c}{$\calB_h$}\\
+\hline
+$N_h$&$h$&\Error&\Rate&\Error&\Rate&$\lambda_h$\\
+\hline
+%  132& 0.478& 3.84e+00&      &   8.49e-01&      &   9.3 \\
+   586& 0.239& 3.84e+00& 0.003&   3.68e-01& 1.208&  18.6 \\
+  2466& 0.119& 3.80e+00& 0.014&   1.68e-01& 1.125&  37.2 \\
+ 10114& 0.060& 3.66e+00& 0.054&   8.08e-02& 1.061&  74.4 \\
+ 40962& 0.030& 3.20e+00& 0.194&   3.97e-02& 1.026& 148.6 \\
+164866& 0.015& 2.16e+00& 0.569&   1.97e-02& 1.011& 296.8 \\
 \hline
 \end{tabular}
 }
@@ -556,41 +640,55 @@ $N_h$&$h$&\Error&\Rate&\Error&\Rate&$\alpha$\\
 \texttt{
 \begin{tabular}{rc|cc|ccc}
 \\\hline
-\multicolumn{2}{c|}{$\lambda=1{,}000$}&\multicolumn{2}{c|}{$\alpha=1$}&
-\multicolumn{3}{c}{$\alpha=\alpha_*(h,\lambda)$}\\
+\multicolumn{2}{c|}{$\lambda=100$}&\multicolumn{2}{c|}{$\calB$}&
+\multicolumn{3}{c}{$\calB_h$}\\
 \hline
-$N_h$&$h$&\Error&\Rate&\Error&\Rate&$\alpha$\\
+$N_h$&$h$&\Error&\Rate&\Error&\Rate&$\lambda_h$\\
 \hline
- %  132& 0.478& 8.31e+00&      &   2.60e+00&      & 0.323 \\
-   586& 0.239& 6.83e+00& 0.281&   1.31e+00& 0.989& 0.423 \\
-  2466& 0.119& 4.12e+00& 0.730&   6.67e-01& 0.972& 0.524 \\
- 10114& 0.060& 1.73e+00& 1.253&   3.44e-01& 0.955& 0.624 \\
- 40962& 0.030& 5.96e-01& 1.536&   1.79e-01& 0.945& 0.724 \\
-164866& 0.015& 1.96e-01& 1.605&   9.29e-02& 0.944& 0.825 \\
+%  132& 0.478& 5.55e+00&      &   2.56e+00&      &   8.5 \\
+   586& 0.239& 2.66e+00& 1.063&   1.26e+00& 1.020&  15.7 \\
+  2466& 0.119& 1.02e+00& 1.387&   6.18e-01& 1.028&  27.1 \\
+ 10114& 0.060& 3.83e-01& 1.407&   3.00e-01& 1.044&  42.7 \\
+ 40962& 0.030& 1.57e-01& 1.291&   1.44e-01& 1.061&  59.8 \\
+164866& 0.015& 7.01e-02& 1.161&   6.90e-02& 1.058&  74.9 \\
 \hline\\\hline
-\multicolumn{2}{c|}{$\lambda=10{,}000$}&\multicolumn{2}{c|}{$\alpha=1$}&
-\multicolumn{3}{c}{$\alpha=\alpha_*(h,\lambda)$}\\
+\multicolumn{2}{c|}{$\lambda=1{,}000$}&\multicolumn{2}{c|}{$\calB$}&
+\multicolumn{3}{c}{$\calB_h$}\\
 \hline
-$N_h$&$h$&\Error&\Rate&\Error&\Rate&$\alpha$\\
+$N_h$&$h$&\Error&\Rate&\Error&\Rate&$\lambda_h$\\
 \hline
- %  132& 0.478& 8.82e+00&      &   2.60e+00&      & 0.242 \\
-   586& 0.239& 8.62e+00& 0.034&   1.31e+00& 0.989& 0.317 \\
-  2466& 0.119& 7.89e+00& 0.127&   6.67e-01& 0.972& 0.393 \\
- 10114& 0.060& 5.95e+00& 0.406&   3.45e-01& 0.954& 0.468 \\
- 40962& 0.030& 3.14e+00& 0.921&   1.79e-01& 0.944& 0.543 \\
-164866& 0.015& 1.20e+00& 1.389&   9.32e-02& 0.942& 0.618 \\
+%  132& 0.478& 8.31e+00&      &   2.59e+00&      &   9.2 \\
+   586& 0.239& 6.83e+00& 0.281&   1.30e+00& 0.993&  18.3 \\
+  2466& 0.119& 4.12e+00& 0.730&   6.61e-01& 0.980&  35.9 \\
+ 10114& 0.060& 1.73e+00& 1.253&   3.37e-01& 0.972&  69.3 \\
+ 40962& 0.030& 5.96e-01& 1.536&   1.70e-01& 0.982& 129.6 \\
+164866& 0.015& 1.96e-01& 1.605&   8.43e-02& 1.015& 229.4 \\
 \hline\\\hline
-\multicolumn{2}{c|}{$\lambda=100{,}000$}&\multicolumn{2}{c|}{$\alpha=1$}&
-\multicolumn{3}{c}{$\alpha=\alpha_*(h,\lambda)$}\\
+\multicolumn{2}{c|}{$\lambda=10{,}000$}&
+\multicolumn{2}{c|}{$\calB$}&
+\multicolumn{3}{c}{$\calB_h$}\\
 \hline
-$N_h$&$h$&\Error&\Rate&\Error&\Rate&$\alpha$\\
+$N_h$&$h$&\Error&\Rate&\Error&\Rate&$\lambda_h$\\
 \hline
- %  132& 0.478& 8.88e+00&      &   2.60e+00&      & 0.194 \\
-   586& 0.239& 8.86e+00& 0.003&   1.31e+00& 0.989& 0.254 \\
-  2466& 0.119& 8.77e+00& 0.014&   6.67e-01& 0.972& 0.314 \\
- 10114& 0.060& 8.45e+00& 0.054&   3.45e-01& 0.954& 0.374 \\
- 40962& 0.030& 7.39e+00& 0.194&   1.79e-01& 0.944& 0.435 \\
-164866& 0.015& 5.01e+00& 0.561&   9.32e-02& 0.942& 0.495 \\
+%  132& 0.478& 8.82e+00&      &   2.60e+00&      &   9.3 \\
+   586& 0.239& 8.62e+00& 0.034&   1.31e+00& 0.989&  18.6 \\
+  2466& 0.119& 7.89e+00& 0.127&   6.67e-01& 0.973&  37.1 \\
+ 10114& 0.060& 5.95e+00& 0.406&   3.44e-01& 0.956&  73.9 \\
+ 40962& 0.030& 3.14e+00& 0.921&   1.78e-01& 0.948& 146.7 \\
+164866& 0.015& 1.20e+00& 1.389&   9.21e-02& 0.952& 289.1 \\
+\hline\\\hline
+\multicolumn{2}{c|}{$\lambda=100{,}000$}&
+\multicolumn{2}{c|}{$\calB$}&
+\multicolumn{3}{c}{$\calB_h$}\\
+\hline
+$N_h$&$h$&\Error&\Rate&\Error&\Rate&$\lambda_h$\\
+\hline
+%  132& 0.478& 8.88e+00&      &   2.60e+00&      &   9.3 \\
+   586& 0.239& 8.86e+00& 0.003&   1.31e+00& 0.989&  18.6 \\
+  2466& 0.119& 8.77e+00& 0.014&   6.67e-01& 0.972&  37.2 \\
+ 10114& 0.060& 8.45e+00& 0.054&   3.44e-01& 0.954&  74.4 \\
+ 40962& 0.030& 7.39e+00& 0.194&   1.79e-01& 0.944& 148.6 \\
+164866& 0.015& 5.01e+00& 0.561&   9.31e-02& 0.943& 296.8 \\
 \hline
 \end{tabular}
 }
@@ -623,34 +721,47 @@ $N_h$&$h$&\Error&\Rate&\Error&\Rate&$\alpha$\\
 \begin{figure}
 \centering
 \includegraphics[scale=0.75]{deformed_meshes_978-crop.pdf}
-\caption{The deformed mesh obtained when each node is displaced by $\vu_h$.  Left: using the standard
-conforming method ($\alpha=1$).  Right: using our new method 
-($\alpha=\alpha_*(h,\lambda))$.}
-\label{fig: deformed mesh}
+\caption{The deformed mesh obtained when each node is displaced by $\vu_h$.
+Left: using the standard conforming method.  Right: using the modified
+method~\eqref{FEM new}.}\label{fig: deformed mesh}
 \end{figure}
 
 \begin{figure}
 \centering
 \includegraphics[scale=0.7]{benchmark-crop.pdf}
-\caption{Convergence of the computed value of the vertical displacement $u_2(A)$}
+\caption{Convergence of the computed value of the vertical
+displacement~$u_2(A)$ for each choice of the bilinear form.}
 \label{fig: benchmark}
 \end{figure}
-\paragraph{Example 2.} (Cook’s membrane problem \cite{Cook1974}) This is a benchmark problem for linear elasticity which combines bending and shearing.  As illustrated in Figure~\ref{fig: benchmark problem},  
-$\Omega$ is the convex domain formed by connecting the vertices $(0,0)$, $(48,44)$, $(48,60),$ and $(0,44)$.
-The left-hand side of $\Omega$ is clamped (that is, $\vu={\bf 0}$), and a constant shear load in the vertical
-direction is applied on the right-hand side, indicated by the red arrow: $\vsigma \vn =(0,g)$ where $g$ is 
-a positive constant.  The remaining  part of the boundary is traction-free, that is, $\vsigma \vn={\bf 0}$, 
-and the body  force~$\vf={\bf 0}$.  The elastic material has Young's modulus~$E=1.12499998125$ MPa and 
-Poisson ratio~$\nu=0.499999975$, so  the Lam\'e parameters are
-\[\lambda=\frac{E\nu}{(1+\nu)(1-2\nu)}=7.5\times10^6\quad\text{and}\quad  
-\mu= \frac{E}{2(1+\nu)}=0.375.\]
-The shear load gives rise to the functional $\ell(\vv) = \int_{44}^{60}g v_2\,\ud x_2$, where 
-$\vv=(v_1,v_2)^T$, $\bsx=(x_1,x_2)$ and $g=1/16$.  Starting from a common initial mesh with~$h=2.57881$, we solved for~$\vu_h$ using $\alpha=1$~and $\alpha=\alpha_*(h,\lambda)=0.214$, and then displaced each node by
-the respective solution~$\vu_h$ to obtain the deformed meshes shown in Figure~\ref{fig: deformed mesh}.  Even with this relatively coarse mesh, the
-locking effect is apparent.
+\paragraph{Example 2.} (Cook’s membrane problem \cite{Cook1974}) This is a
+benchmark problem for linear elasticity which combines bending and shearing.  As
+illustrated in Figure~\ref{fig: benchmark problem}, $\Omega$ is the convex
+domain formed by connecting the vertices $(0,0)$, $(48,44)$, $(48,60)$, and
+$(0,44)$. The left-hand side of~$\Omega$ is clamped (that is,
+$\vu=\mathbf{0}$), and a constant shear load in the vertical direction is
+applied on the right-hand side, indicated by the red arrow: $\vsigma \vn =(0,g)$
+where $g$ is a positive constant.  The remaining  part of the boundary is
+traction-free, that is, $\vsigma \vn=\mathbf{0}$, and the body
+force~$\vf=\mathbf{0}$.  The elastic material has Young's
+modulus~$E=1.12499998125$ MPa and Poisson ratio~$\nu=0.499999975$, so  the
+Lam\'e parameters are
+\[
+\lambda=\frac{E\nu}{(1+\nu)(1-2\nu)}=7.5\times10^6\quad\text{and}\quad
+\mu= \frac{E}{2(1+\nu)}=0.375.
+\]
+The shear load gives rise to the
+functional~$\ell(\vv) = \int_{44}^{60}g v_2\,\ud x_2$, where
+$\vv=(v_1,v_2)^T$, $\bsx=(x_1,x_2)$ and $g=1/16$.  Starting from a common
+initial mesh with~$h=2.57881$, we solved for~$\vu_h$ using both the
+standard bilinear form~$\calB$ (using $\lambda$) and the modified
+form~$\calB_h$ (using $\lambda_h=29.796$). Each node was then displaced by the
+respective solution~$\vu_h$ to obtain the deformed meshes shown in
+Figure~\ref{fig: deformed mesh}.  The locking effect is apparent.
 
- We also compared the computed values for the vertical displacement at the midpoint $A=(48,50)$ of the right-hand edge with the benchmark value 
-$u_2(A)=16.442$ \cite[p.~3491]{LiuWang2022}.  Figure~\ref{fig: benchmark} shows that using~$\alpha=1$ gives a much less accurate result than using $\alpha=\alpha_*(h,\lambda)$.
+We also compared the computed values for the vertical displacement at the
+midpoint~$A=(48,50)$ of the right-hand edge with the benchmark value
+$u_2(A)=16.442$~\cite[p.~3491]{LiuWang2022}.  Figure~\ref{fig: benchmark} shows
+that using~$\calB$ gives a much less accurate result than using $\calB_h$
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{thebibliography}{99.}
@@ -687,7 +798,9 @@ problems, Numer. Math., 62, 439--463 (1992).
 
 \bibitem{Falk1991} R. Falk, Nonconforming finite element Methods for the equations of linear elasticity, Math. Comput., 57, 529--550 (1991).
 
-\bibitem{GopalakrishnanGuzmán2011} Gopalakrishnan, J., Guzmán, J.: Symmetric nonconforming mixed finite elements for linear elasticity. SIAM J. Numer. Anal. 49, 1504–1520 (2011).
+\bibitem{GopalakrishnanGuzman2011} Gopalakrishnan, J., Guzm\'an, J.: Symmetric
+nonconforming mixed finite elements for linear elasticity. SIAM J. Numer. Anal.
+49, 1504–1520 (2011).
 
 \bibitem{HansboLarson2002} P. Hansbo and  M. G. Larson, Discontinuous Galerkin methods for incompressible and nearly incompressible elasticity by Nitsche’s method, Comput. Methods Appl. Mech. Eng., 191, 1895--1908 (2002).
 

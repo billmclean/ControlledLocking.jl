@@ -1,4 +1,4 @@
-import ControlledLocking: optimal_α
+import ControlledLocking: reduced_λ
 import ControlledLocking.Example2: numerical_solution, essential_bcs,
                                    deformed_mesh, selected_displacement,
                                    geometry_filename, diam_Ω, λ, μ, g, u2_A
@@ -19,10 +19,10 @@ mesh = FEMesh(gmodel, hmax; order=1, save_msh_file=false,
 
 k = 2
 dof = DegreesOfFreedom(mesh[k], essential_bcs)
-std_u1h, std_u2h = numerical_solution(λ, μ, 1.0, g, dof)
+std_u1h, std_u2h = numerical_solution(λ, μ, λ, g, dof)
 h = max_elt_diameter(mesh[k])
-α = optimal_α(h, λ, diam_Ω)
-ctrl_u1h, ctrl_u2h = numerical_solution(λ, μ, α, g, dof)
+λₕ = λ / ( 1 + λ * h / diam_Ω )
+ctrl_u1h, ctrl_u2h = numerical_solution(λ, μ, λₕ, g, dof)
 
 figure(1, figsize=(11,5))
 std_dof = deformed_mesh(std_u1h, std_u2h, dof)
@@ -35,13 +35,13 @@ subplot(1, 2, 1)
 plot(x, y, "--")
 triplot(std_x, std_y, std_triangles, linewidth=0.5)
 axis("equal")
-text(30, 10, "α = 1")
+text(30, 10, L"$\lambda=7,500,000$")
 subplot(1, 2, 2)
 plot(x, y, "--")
 triplot(ctrl_x, ctrl_y, ctrl_triangles, linewidth=0.5)
 axis("equal")
-s = @sprintf("α = %0.3f", α)
-text(30, 10, s)
+s = @sprintf("%0.3f", λₕ)
+text(30, 10, latexstring("\$\\lambda_h="*s*"\$"))
 
 h = max_elt_diameter(mesh[k])
 Nₕ = 2 * dof.num_free
@@ -56,14 +56,14 @@ ctrl_u1_A= similar(Nₕ)
 ctrl_u2_A = similar(Nₕ)
 for k = 1:num_solutions
     global Nₕ, std_u1_A, std_u2_A, ctrl_u1_A, ctrl_u2_A
-    local dof, h, std_u1h, std_u2h, α, ctrl_u1h, ctrl_u2h
+    local dof, h, std_u1h, std_u2h, λₕ, ctrl_u1h, ctrl_u2h
     dof = DegreesOfFreedom(mesh[k], essential_bcs)
     Nₕ[k] = dof.num_free
-    std_u1h, std_u2h = numerical_solution(λ, μ, 1.0, g, dof)
+    std_u1h, std_u2h = numerical_solution(λ, μ, λ, g, dof)
     std_u1_A[k], std_u2_A[k] = selected_displacement(std_u1h, std_u2h, dof)
     h = max_elt_diameter(mesh[k])
-    α = optimal_α(h, λ, diam_Ω)
-    ctrl_u1h, ctrl_u2h = numerical_solution(λ, μ, α, g, dof)
+    λₕ = reduced_λ(h, λ, diam_Ω)
+    ctrl_u1h, ctrl_u2h = numerical_solution(λ, μ, λₕ, g, dof)
     ctrl_u1_A[k], ctrl_u2_A[k] = selected_displacement(ctrl_u1h, ctrl_u2h, dof)
 end
 
@@ -71,7 +71,7 @@ figure(2)
 semilogx(Nₕ, ctrl_u2_A, "o-", 
 	 Nₕ, std_u2_A, "x-", 
 	[Nₕ[1], Nₕ[end]], [u2_A, u2_A], "k-")
-legend((L"$\alpha=\alpha_*(\lambda,h)$", L"$\alpha=1$ "))
+legend((L"$\mathcal{B}_h$", L"$\mathcal{B}$ "))
 grid(true)
 xlabel(L"$N_h$")
 ylabel(L"$u_2(A)$")

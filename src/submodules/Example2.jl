@@ -20,9 +20,9 @@ const μ = E / ( 2 * (1 + ν) )
 const g = 1/16
 const u2_A = 16.442
 
-function numerical_solution(λ::Float64, μ::Float64, α::Float64, c::Float64,
+function numerical_solution(λ::Float64, μ::Float64, λₕ::Float64, c::Float64,
 	dof::DegreesOfFreedom)
-    bilinear_forms = Dict("Omega" => [(∫∫λ_div_u_div_v!, λ^α),
+    bilinear_forms = Dict("Omega" => [(∫∫λ_div_u_div_v!, λₕ),
                                       (∫∫2μ_εu_εv!, μ)])
     gN = SA[0.0, c]
     linear_funcs = Dict("Right" => (∫g_dot_v!, gN))
