@@ -17,13 +17,13 @@ for row in eachindex(mesh)
     h[row] = max_elt_diameter(mesh[row])
 end
 
-λ = [1_000.0, 10_000.0, 100_000.0]
+λ = [100.0, 1_000.0, 10_000.0, 100_000.0]
 nblocks = length(λ)
-block_method = [(1, 1), (1, 2), (2, 1), (2, 2), (3, 1), (3, 2)]
+block_method = [(1, 1), (1, 2), (2, 1), (2, 2), (3, 1), (3, 2), (4,1), (4,2)]
 
 L2err = Array{Float64}(undef, nrows, nblocks, 2)
 H1err = similar(L2err)
-α = Array{Float64}(undef, nrows, nblocks)
+λₕ = Array{Float64}(undef, nrows, nblocks)
 
 ncases = 2 * nblocks
 @printf("Using %d threads to handle %d cases.\n", 
@@ -34,13 +34,16 @@ start = time()
     for row = 1:nrows
 	if method == 1
 	    L2err[row,block,1], 
-	    H1err[row,block,1] = numerical_errors(
-                                  λ[block], 1.0, dof[row]) 
+	    H1err[row,block,1] = numerical_errors(λ[block], λ[block], dof[row]) 
 	else
-	    α[row,block] = optimal_α(h[row], λ[block], diam_Ω)
+#	    λₕ[row,block] = λ[block] / ( 1 + λ[block] * h[row] / diam_Ω )
+            d = diam_Ω / h[row]
+#	    λₕ[row,block] = λ[block] > d ? d : λ[block]
+            α = min(1, log(d)/log(λ[block]))
+	    λₕ[row,block] = λ[block]^α
 	    L2err[row,block,2], 
 	    H1err[row,block,2] = numerical_errors(
-                                  λ[block], α[row,block], dof[row]) 
+                                  λ[block], λₕ[row,block], dof[row]) 
 	end
     end
 end
@@ -53,19 +56,19 @@ function print_table(io::IO, err::Array{Float64},
     @printf(io, "\n%s\n\n", title)
     @printf(io, "%12s      %8s           %10s\n", "", "Standard", "Controlled")
     @printf(io, "%6s  %5s  %8s  %5s    %8s  %5s  %5s\n\n",
-	    "Nₕ", "h", "error", "rate", "error", "rate", "α")
+	    "Nₕ", "h", "error", "rate", "error", "rate", "λₕ")
     for row = 1:nrows
         Nₕ = 2 * dof[row].num_free
 	@printf(io, "%6d& %5.3f& ", Nₕ, h[row])
 	if row == 1
-	    @printf(io, "%8.2e& %5s&   %8.2e& %5s& %5.3f ", 
-	            err[row,block,1], "", err[row,block,2], "", α[row,block])
+	    @printf(io, "%8.2e& %5s&   %8.2e& %5s& %5.1f ", 
+	            err[row,block,1], "", err[row,block,2], "", λₕ[row,block])
 	else
 	    rate1 = log2(err[row-1,block,1] / err[row,block,1])
 	    rate2 = log2(err[row-1,block,2] / err[row,block,2])
-            @printf(io, "%8.2e& %5.3f&   %8.2e& %5.3f& %5.3f ", 
+            @printf(io, "%8.2e& %5.3f&   %8.2e& %5.3f& %5.1f ", 
                     err[row,block,1], rate1, 
-		    err[row,block,2], rate2, α[row,block])
+		    err[row,block,2], rate2, λₕ[row,block])
 	end
 	@printf(io, "\\\\\n")
     end
