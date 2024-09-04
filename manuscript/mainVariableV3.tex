@@ -23,6 +23,7 @@
 \def\N{\mathbb{N}}
 \newcommand{\calO}{\mathcal{O}}
 \newcommand{\calB}{\mathcal{B}}
+\newcommand{\calBhat}{\hat{\mathcal{B}}}
 \newcommand{\calL}{\mathcal{L}}
 \newcommand{\I}{\mathcal{I}}
 \newcommand{\bfL}{\mathbf{L}}
@@ -46,6 +47,9 @@
 \newcommand{\balpha}{\boldsymbol \alpha}
 \newcommand{\bbeta}{\boldsymbol \beta}
 \newcommand{\vV}{{\bf V}}
+\newcommand{\vH}{{\bf H}}
+\newcommand{\vVhat}{\mathbf{\hat V}}
+\newcommand{\vHhat}{\mathbf{\hat H}}
 \newcommand{\vw}{{\bf w}}
 \newcommand{\bH}{{\boldsymbol{H}}}
 \newcommand{\bsd}{{\boldsymbol{d}}}
@@ -67,6 +71,7 @@
 \newcommand{\veps}{{\boldsymbol{\varepsilon}}}
 \newcommand{\iprod}[1]{\langle#1 \rangle}
 \newcommand{\ud}{\mathrm{d}}
+\newcommand{\diam}{\mathrm{diam}}
 %\theoremstyle{plain}
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{prop}[theorem]{Proposition}%[section]
@@ -190,7 +195,8 @@ where the linear functional~$\ell$ and the bilinear form~$\calB$ are defined by
 \begin{equation*}\label{eq: bilinear}
 \ell(\vv) = \int_\Omega \vf \cdot \vv \,\ud\bsx 
  \quad\text{and}\quad
-\calB(\vu,\vv)=\int_\Omega[2\mu\,\veps(\vu):\veps(\vv)+\lambda(\nabla\cdot\vu)(\nabla\cdot\vv)]\,\ud\bsx.
+\calB(\vu,\vv)=\int_\Omega[2\mu\,\veps(\vu):\veps(\vv)+\lambda(\nabla\cdot\vu)
+(\nabla\cdot\vv)]\,\ud\bsx.
 \end{equation*}
 The colon operator is the inner product between tensors.  Let $\|\cdot\|$ denote the norm 
 in~${\bf L}^2(\Omega)=[L^2(\Omega)]^2$, and let $\|\cdot\|_{\bf V}$~and $\|\cdot\|_{\bf H}$ denote the 
@@ -318,10 +324,10 @@ Using $\lambda_h\|\nabla\cdot(\vu_h-\Pi_h\vu)\|^2
 \]
 Hence, using \eqref{projection estimate Bh} and the regularity results in
 Theorem~\ref{lem: vu bound},  we have
-\[
+\begin{equation}\label{eq: balance terms}
 \|\vu_h-\Pi_h \vu\|_{\calB_h}^2\le C\bigl(\lambda_hh^2
     +(\lambda-\lambda_h)^2\lambda_h^{-1}\lambda^{-2}\bigr)\|\vf\|^2.
-\]
+\end{equation}
 Our choice of~$\lambda_h$ means that
 $\lambda_h h^2=(\lambda-\lambda_h)^2\lambda_h^{-1}\lambda^{-2}
     =\lambda h^2(1+\lambda h)^{-1}\le h$, and therefore
@@ -520,9 +526,164 @@ Corollary~\ref{cor: L2 H1 errors}.}
 %(1) the functions $\phi,\psi,$ and $\chi,$ (2) the text before \eqref{eq: uh
 %Pih u} and after \eqref{h1 error}, and (3) the material after \eqref{change in
 %lambda 2}.
-
-
 \end{remark}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Scaling effects}
+In the foregoing analysis, different terms will scale differently with the size
+of~$\Omega$.  To obtain a scale-invariant formula for~$\lambda_h$, let
+$L=\diam(\Omega)$ denote the diameter of~$\Omega$,
+and define
+\[
+\widehat\Omega=L^{-1}\Omega=\{\,L^{-1}\bsx:\bsx\in\Omega\,\}
+\]
+so that $\diam(\widehat\Omega)=1$.  We write the $\mathbf{L}^2$-norms on
+$\Omega$~and $\widehat\Omega$ by $\|\cdot\|_\Omega$ and
+$\|\cdot\|_{\widehat\Omega}$, respectively. Define the Sobolev seminorm
+$|\vv|_{r,\Omega}=\bigl(\sum_{|\alpha|=r}
+\|\partial^\alpha\vv\|_{\Omega}^2\bigr)^{1/2}$,
+and equip $\vV$ and $\vH$ with the norms given by
+\begin{equation}\label{eq: V H norms}
+\|\vv\|_{\vV}^2=L^{-2}\|\vv\|_\Omega^2+|\vv|_{1,\Omega}^2
+\quad\text{and}\quad
+\|\vv\|_{\vH}^2=\|\vv\|_{\vV}^2+L^2|\vv|_{2,\Omega}^2.
+\end{equation}
+If $\vv(\bsx)=\hat\vv(\hat\bsx)$ for $\bsx=L\hat\bsx$, then
+$\partial_i\vv(\bsx)=L^{-1}\partial_i\hat\vv(\hat\bsx)$ and so
+$|\vv|_{r,\Omega}=L^{1-r}|\hat\vv|_{r,\widehat\Omega}$.  Thus, if the spaces
+$\vVhat=[H^1_0(\widehat\Omega)]^2$ and $\vHhat=[H^2(\widehat\Omega)]^2$ are
+equipped with the norms given by
+\[
+\|\hat\vv\|_{\vVhat}^2=\|\hat\vv\|_{\widehat\Omega}^2
+    +|\hat\vv|_{1,\widehat\Omega}^2
+\quad\text{and}\quad
+\|\hat\vv\|_{\vHhat}^2=\|\hat\vv\|_{\vVhat}^2
+    +|\hat\vv|_{2,\widehat\Omega}^2.
+\]
+then
+\[
+\|\vv\|_\Omega=L\|\hat\vv\|_{\widehat\Omega},\qquad
+\|\vv\|_{\vV}=\|\hat\vv\|_{\vVhat},\qquad
+\|\vv\|_{\mathbf{H}}=\|\hat\vv\|_{\vHhat}.
+\]
+Since $\veps(\vv)=L^{-1}\veps(\hat\vv)$ and
+$\nabla\cdot\vv=L^{-1}\nabla\cdot\hat\vv$,
+if $\vu\in\vV$ satisfies \eqref{para weak}, then $\hat\vu\in\vVhat$ will
+satisfy
+\[
+\calBhat(\hat\vu,\hat\vv)=\hat\ell(\hat\vv)
+\quad\text{for all $\hat\vv\in\vVhat$,}
+\]
+where
+\[
+\hat\ell(\hat\vv) = \int_{\widehat\Omega}L^2\hat\vf\cdot\hat\vv\,\ud\hat\bsx
+\quad\text{and}\quad
+\calBhat(\hat\vu,\hat\vv)=\int_{\widehat\Omega}
+[2\mu\,\veps(\hat\vu):\veps(\hat\vv)+\lambda(\nabla\cdot\hat\vu)
+    (\nabla\cdot\hat\vv)]\,\ud\hat\bsx,
+\]
+because $\calB(\vu,\vv)=\calBhat(\hat\vu,\hat\vv)$ and
+$\ell(\vv)=\hat\ell(\hat\vv)$. Applying Theorem~\ref{lem: vu bound}
+to~$\hat\vu$, we have
+\[
+\|\hat\vu\|_{\vVhat}+\lambda\|\nabla\cdot\hat\vu\|_{\widehat\Omega}
+    \le C\|\hat\ell\|_{\vVhat^*}
+\quad\text{and}\quad
+\|\hat\vu\|_{\vHhat}\le C\|L^2\hat\vf\|_{\widehat\Omega}.
+\]
+It follows from $\ell(\vv)=\hat\ell(\hat\vv)$~and
+$\|\vv\|_{\vV}=\|\hat\vv\|_{\vVhat}$ that
+$\|\ell\|_{\vV^*}=\|\hat\ell\|_{\vVhat^*}$.  Moreover,
+$\|\vv\|_\Omega\le L\|v\|_{\vV}$, so
+\[
+\|\vu\|_{\vV}+\lambda\|\nabla\cdot\vu\|_\Omega\le C\|\ell\|_{\vV^*}
+\le CL\|f\|_\Omega
+\quad\text{and}\quad
+\|\vu\|_{\vH}\le CL\|\vf\|_\Omega,
+\]
+with~$C$ independent of~$L$.
+
+The map~$\bsx\mapsto\hat\bsx$ takes the triangulation of~$\Omega$ to a
+triangulation of~$\widehat\Omega$ with mesh size~$\hat h=h/L$.  Defining
+projection $\Pi_{\hat h}\hat v(\hat\bsx)=\Pi_hv(\bsx)$, it is easily verified
+that the approximation property
+\[
+\|\hat\vv-\Pi_{\hat h}\hat\vv\|_{\widehat\Omega}
+    +\hat h\|\nabla(\hat\vv-\Pi_{\hat h}\hat\vv)\|_{\widehat\Omega}
+    \le C\hat h^2\|\hat\vv\|_{\vHhat}
+\]
+implies that
+\[
+\|\vv-\Pi_h\vv\|_\Omega+h\|\nabla(\vv-\Pi_h\vv)\|_\Omega
+    \le CL^{-1}h^2\|\vv\|_{\vH},
+\]
+with the same constant~$C$.  Thus, arguing as in~\eqref{projection estimate Bh},
+\[
+\|\vu-\Pi_h\vu\|_{\calB_h}^2
+    \le C\lambda_h\|\nabla(\vv-\Pi_h\vv)\|_\Omega^2
+    \le C\lambda_h(L^{-1}h)^2\|\vu\|_{\vH}^2
+    \le C\lambda_hh^2\|\vf\|_\Omega^2,
+\]
+with $\|\nabla\cdot\vu\|_\Omega\le CL\lambda^{-1}\|\vf\|_{\Omega}$,
+so instead of~\eqref{eq: balance terms} we obtain
+\begin{align*}
+\|\vu_h-\Pi_h \vu\|_{\calB_h}^2&\le C\bigl(\lambda_hh^2
+    +(\lambda-\lambda_h)^2\lambda_h^{-1}L^2\lambda^{-2}\bigr)\|\vf\|^2\\
+&=CL^2\bigl(\lambda_h\hat h^2
+    +(\lambda-\lambda_h)^2\lambda_h^{-1}\lambda^{-2}\bigr)\|\vf\|_\Omega^2,
+\end{align*}
+now with~$C$ independent of~$L$.  By putting
+\begin{equation}\label{eq: lambda_h L}
+\lambda_h=\frac{\lambda}{1+\lambda h/L}
+\end{equation}
+we find $\lambda_h\hat h^2=(\lambda-\lambda_h)^2\lambda_h^{-1}L^2\lambda^{-2}
+=\lambda\hat h^2/(1+\lambda\hat h)\le\hat h$ and hence
+\[
+\|\vu_h-\Pi_h\vu\|_{\calB_h}^2\le CL^2\hat h\|\vf\|_\Omega^2
+    =CLh\|\vf\|_\Omega^2.
+\]
+Since $\lambda_hh^2=L^2\lambda_h\hat h^2\le L^2\hat h=Lh$, it follows that
+\[
+\|\vu_h-\vu\|\le C(Lh)^{1/2}\|\vf\|_\Omega.
+\]
+
+Alternatively, we can derive the same estimate by applying
+Theorem~\ref{Convergence theorem} to~$\hat\vu_h$ and concluding that
+\[
+\|\vu_h-\vu\|_{\calB_h}=\|\hat\vu_h-\hat\vu\|_{\calBhat_h}
+    \le C\hat h^{1/2}\|L^2\hat f\|_{\widehat\Omega}=CLh\|f\|_\Omega.
+\]
+Likewise, by defining $\widehat\calL(\hat\vv)=\calL(\vv)$ and
+applying \eqref{convergence calL} to~$\hat\vu_h$, we have
+\[
+|\calL(\vu_h)-\calL(\vu)|=|\widehat\calL(\hat\vu_h)-\widehat\calL(\hat\vu)|
+    \le C(\hat h+\lambda^{-1})\|\hat\vf\|_{\widehat\Omega}\|\widehat\calL\|.
+\]
+The inequality $|\widehat\calL(\hat\vv)|\le\|\calL\|\|\vv\|_\Omega
+=\|\calL\|L\|\hat\vv\|_{\widehat\Omega}$ implies that
+$\|\widehat\calL\|\le L\|\calL\|$, whereas
+$\|\hat\vf\|_{\widetilde\Omega}=L^{-1}\|\vf\|_\Omega$, so
+\[
+|\calL(\vu_h)-\calL(\vu)|\le C\biggl(\frac{h}{L}+\frac{1}{\lambda}\biggr)
+    \|\vf\|\|\calL\|.
+\]
+Similarly, by applying Corollary~\ref{cor: L2 H1 errors} to $\hat\vu_h$,
+\[
+\|\vu_h-\vu\|_\Omega=L\|\hat\vu_h-\hat\vu\|_{\widehat\Omega}
+    \le CL(\hat h+\lambda^{-1})\|L^2\hat f\|_{\widehat\Omega}
+\]
+and
+\[
+\|\vu_h-\vu\|_{\vV}=\|\hat\vu_h-\hat\vu\|_{\vVhat}
+    \le C\hat h^{1/2}\|L^2\hat f\|_{\widehat\Omega}.
+\]
+Thus,
+\[
+\|\vu_h-\vu\|_\Omega\le CL^2\biggl(\frac{h}{L}+\frac{1}{\lambda}\biggr)
+    \|\vf\|_\Omega
+\quad\text{and}\quad
+\|\vu_h-\vu\|_{\vV}\le C(Lh)^{1/2}\|\vf\|_\Omega.
+\]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical experiments}\label{Sec: Numeric}
@@ -532,12 +693,8 @@ Corollary~\ref{cor: L2 H1 errors}, we expect to observe $O(h)$~and $O(h^{1/2})$
 convergence rates in the ${\bf L}^2(\Omega)$-norm for ${\bf u}$~and
 $\nabla\mathbf{u}$, respectively, uniformly in~$\lambda$, provided that all the
 imposed assumptions are  satisfied.   The Julia code used in these experiments
-is available online~\cite{McLean2024}.  We found it best to modify the
-definition~\eqref{eq: lambda_h} of~$\lambda_h$ by scaling the mesh size~$h$ to
-the diameter~$d_\Omega$ of~$\Omega$, setting
-\begin{equation}\label{eq: lambda_h d_Omega}
-\lambda_h=\frac{\lambda}{1+\lambda h/d_\Omega}.
-\end{equation}
+is available online~\cite{McLean2024}.  We used the scaled version
+of~$\lambda_h$ defined in~\eqref{eq: lambda_h L} with~$L=\diam(\Omega)$.
 
 \paragraph{Example 1.} We chose  $\Omega=(0,\pi)^2$ and chose the body force so
 that the exact solution is
