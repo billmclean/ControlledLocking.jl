@@ -174,20 +174,27 @@ material is not feasible.}
 
 The aim of the present work is to demonstrate that the locking phenomenon in
 the popular piecewise linear conforming FEM can be avoided by replacing
-the Lam\'e parameter~$\lambda$ with~$\lambda_h=\lambda/(1+\lambda h)$ in the
-stiffness matrix.  Although most of our analysis is independent of the
-dimension, we need to assume that $\Omega\subseteq\mathbb{R}^2$ so that we can
-apply certain $H^2$-regularity results
-of Brenner~and Sung~\cite{BrennerSung1992}.
+the Lam\'e parameter~$\lambda$ with~$\lambda_h=\lambda/(1+\lambda h/L)$ in the
+stiffness matrix, where $L$ is a length-scale for the problem.  Although most
+of our analysis is independent of the dimension, we need to assume that
+$\Omega\subseteq\mathbb{R}^2$ so that we can apply certain $H^2$-regularity
+results of Brenner~and Sung~\cite{BrennerSung1992}.
 
-In the next section, we succinctly discuss the weak formulation of Problem~\eqref{eq:L1} and the well-posedness of the modified conforming FEM. In Section \ref{ConvAna}, we demonstrate that the 
+In the next section, we succinctly discuss the weak formulation of
+Problem~\eqref{eq:L1} and the well-posedness of the modified conforming FEM, as
+well as setting up a formalism to keep track of how terms in our estimates
+scale with~$L$. In Section \ref{ConvAna}, we demonstrate that the
 scheme is $O(h)$~accurate, uniformly in~$\lambda$. Additionally, we include a remark on the applicability of these results in the case of mixed Dirichlet-traction boundary conditions. Furthermore, we include another remark on how to extend the proposed finite element scheme and the convergence analysis for the case of an inhomogeneous body, where  the Lam\'e parameters $\lambda$ and $\mu$ depend on the space variable $\bsx \in \Omega$.  
 To support our theoretical findings, we present some numerical results in Section~\ref{Sec: Numeric} for two different examples,  including Cook's benchmark problem.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Modified  conforming FEM}\label{Sec: FEM}
-In this section, we briefly discuss the existence and uniqueness of the weak solution of \eqref{eq:L1}, and then define our piecewise linear modified conforming Galerkin FEM. We investigate the error estimates in a separate section.  
+\section{Modified conforming FEM}\label{Sec: FEM}
+In this section, we begin by discussing the existence and uniqueness of the
+weak solution of \eqref{eq:L1}, and then introduce some scale-invariant
+norms before defining our piecewise linear, modified conforming Galerkin FEM.
+We investigate the error estimates in the next section.
 
-In the weak formulation of  equation~\eqref{eq:L1}, we seek $\vu \in \vV$ satisfying
+In the weak formulation of  equation~\eqref{eq:L1}, we seek $\vu \in \vV$
+satisfying
 \begin{equation}\label{para weak}
  \calB(\vu, \vv) = \ell(\vv), \quad \text{for all~~$\vv \in \vV$,}
 \end{equation}
@@ -198,9 +205,11 @@ where the linear functional~$\ell$ and the bilinear form~$\calB$ are defined by
 \calB(\vu,\vv)=\int_\Omega[2\mu\,\veps(\vu):\veps(\vv)+\lambda(\nabla\cdot\vu)
 (\nabla\cdot\vv)]\,\ud\bsx.
 \end{equation*}
-The colon operator is the inner product between tensors.  Let $\|\cdot\|$ denote the norm 
-in~${\bf L}^2(\Omega)=[L^2(\Omega)]^2$, and let $\|\cdot\|_{\bf V}$~and $\|\cdot\|_{\bf H}$ denote the 
-norms in $\vV=[H^1_0(\Omega)]^2$~and ${\bf H}=[H^2(\Omega)]^2$, respectively. Here, $H^1_0(\Omega)$~and 
+The colon operator is the inner product between tensors.  Let $\|\cdot\|$
+denote the norm in~${\bf L}^2(\Omega)=[L^2(\Omega)]^2$, and let
+$\|\cdot\|_{\vV}$~and $\|\cdot\|_{\vH}$ denote norms in
+$\vV=[H^1_0(\Omega)]^2$~and ${\vH}=[H^2(\Omega)]^2$, respectively.  (Below, we
+will make specific choices of the latter two norms.) Here, $H^1_0(\Omega)$~and
 $H^2(\Omega)$ are the usual Sobolev spaces of scalar-valued functions on~$\Omega$.  Finally, $\vV^*$ is the 
 dual space of~$\vV$ with respect to the inner product in~${\bf L}^2(\Omega)$. 
  
@@ -209,19 +218,21 @@ Since $\calB(\vv,\vw) \le C_{\lambda,\mu}\|\nabla \vv\|\,\|\nabla \vw\|
 form~$\calB(\cdot,\cdot)$ is bounded over $\vV \times \vV$. The coercivity of~$\calB(\cdot,\cdot)$ 
 on~$\vV$ follows from Korn's inequality,
 \begin{equation}\label{eq: coer B}
-\|\vv\|_\calB^2:=\calB(\vv,\vv)\ge  2 \mu\|\veps(\vv)\|^2 \ge c \mu \| \vv\|_{\vV}^2, 
-\quad \vv \in \vV.
+\|\vv\|_\calB^2:=\calB(\vv,\vv)\ge2\mu\|\veps(\vv)\|^2\ge c\mu\|\vv\|_{\vV}^2,
+\quad\text{for all $\vv\in\vV$.}
 \end{equation}
-Owing to these two properties, and since $|\ell(\vv)|\le \|\vf\|_{\vV^*}\|\vv\|_{\vV}$,  an application of 
+Owing to these two properties, and since $|\ell(\vv)|
+\le \|\vf\|_{\vV^*}\|\vv\|_{\vV}$, an application of
 the Lax--Milgram theorem completes the proof of the next theorem.   
 
 \begin{theorem}\label{thm: unique solution}
-For every $f \in \vV^*$, the problem~\eqref{para weak} has a unique solution~$\vu\in\vV$. 
+For every $\ell\in \vV^*$, the problem~\eqref{para weak} has a unique
+solution~$\vu\in\vV$.
 \end{theorem}
 
-The convergence analysis rests on balancing two terms that scale differently
-with the size of the domain~$\Omega$.  We therefore introduce a reference
-domain with unit diameter,
+The choice of~$\lambda_h$ will follow by balancing two terms that scale
+differently with the size of the domain~$\Omega$.  We therefore introduce a
+reference domain with unit diameter,
 \[
 \widehat\Omega=L^{-1}\Omega=\{\,L^{-1}\bsx:\bsx\in\Omega\,\}
 \quad\text{where $L=\diam(\Omega)$.}
@@ -241,9 +252,9 @@ Denote the Sobolev seminorm by $|\hat\vv|_{r,\Omega}=\bigl(\sum_{|\alpha|=r}
 \]
 because $\ud\bsx=L^2\ud\hat\bsx$~and
 $\partial^\alpha\vv(\bsx)=L^{-|\alpha|}\partial^\alpha\hat\vv(\hat\bsx)$.
-Equip $\vV$ and $\vH$ with norms given by
+Equip $\vV$ and $\vH$ with the specific norms given by
 \begin{equation}\label{eq: V H norms}
-\|\vv\|_{\vV}^2=L^{-2}\|\vv\|_\Omega^2+|\vv|_{1,\Omega}^2
+\|\vv\|_{\vV}^2=L^{-2}\|\vv\|^2+|\vv|_{1,\Omega}^2
 \quad\text{and}\quad
 \|\vv\|_{\vH}^2=\|\vv\|_{\vV}^2+L^2|\vv|_{2,\Omega}^2,
 \end{equation}
@@ -251,7 +262,7 @@ and the corresponding spaces
 $\vVhat=[H^1_0(\widehat\Omega)]^2$ and $\vHhat=[H^2(\widehat\Omega)]^2$ with
 norms given by
 \[
-\|\hat\vv\|_{\vVhat}^2=\|\hat\vv\|_{\widehat\Omega}^2
+\|\hat\vv\|_{\vVhat}^2=\|\hat\vv\|_{\mathbf{L}^2(\widehat\Omega)}^2
     +|\hat\vv|_{1,\widehat\Omega}^2
 \quad\text{and}\quad
 \|\hat\vv\|_{\vHhat}^2=\|\hat\vv\|_{\vVhat}^2
@@ -273,17 +284,21 @@ satisfy
 \quad\text{for all $\hat\vv\in\vVhat$,}
 \]
 where
-\[
+\begin{equation}\label{eq: ell B hat}
 \hat\ell(\hat\vv) = \int_{\widehat\Omega}L^2\hat\vf\cdot\hat\vv\,\ud\hat\bsx
 \quad\text{and}\quad
 \calBhat(\hat\vu,\hat\vv)=\int_{\widehat\Omega}
 [2\mu\,\veps(\hat\vu):\veps(\hat\vv)+\lambda(\nabla\cdot\hat\vu)
-    (\nabla\cdot\hat\vv)]\,\ud\hat\bsx,
-\]
-Here, $\hat\ell(\hat\vv)=\ell(\vv)\le\|\vf\|\|\vv\|\le L\|\vv\|_{\vV}$ so
-$\|\hat\ell\|_{\vVhat^*}=\|\ell\|_{\vV^*}\le L\|\vf\|$. For the convergence
-analysis, we require the following regularity properties, which, apart from the
-dependence on~$L$, are a special case of a result of
+    (\nabla\cdot\hat\vv)]\,\ud\hat\bsx.
+\end{equation}
+Noting that $\hat\ell(\hat\vv)=\ell(\vv)$ and
+$\|\hat\vv\|_{\vVhat}=\|\vv\|_{\vV}$, with $\|\vv\|\le L\|\vv\|_{\vV}$, we see
+that
+\begin{equation}\label{eq: norm ell}
+\|\hat\ell\|_{\vVhat^*}=\|\ell\|_{\vV^*}\le L\|\vf\|.
+\end{equation}
+For the convergence analysis, we require the following regularity properties,
+which, apart from the dependence on~$L$, are a special case of a result of
 Brenner and Sung~\cite[Lemma~2.2]{BrennerSung1992}
 
 \begin{theorem}\label{lem: vu bound}
@@ -295,8 +310,8 @@ satisfies
 \quad\text{and}\quad
 \|\vu\|_{\vH}\le CL\|\vf\|.
 \end{equation}
-In both estimates, the constant~$C$ depends on~$\Omega$~and $\mu$, but is
-independent of $\lambda$~and $L$.
+In both estimates, the constant~$C$ depends on~$\widehat\Omega$~and $\mu$, but
+is independent of $\lambda$~and $L$.
 \end{theorem}
 \begin{proof}
 By Korn's inequality, $\calBhat(\hat\vu,\hat\vu)\ge c\mu\|\hat\vu\|_{\vVhat}^2$
@@ -308,7 +323,7 @@ c\mu\|\hat\vu\|_{\vVhat}^2\le\calBhat(\hat\vu,\hat\vu)=\hat\ell(\hat\vu)
 \]
 and so $\|\vu\|_{\vV}=\|\hat\vu\|_{\vVhat}\le C\mu^{-1/2}\|\ell\|_{\vV^*}$.
 There exists $\hat\vw\in\vVhat$ such that
-$\nabla\cdot\hat\vw=\nabla\cdot\hat\vu$ in~$\widetilde\Omega$ and
+$\nabla\cdot\hat\vw=\nabla\cdot\hat\vu$ in~$\widehat\Omega$ and
 $\|\hat\vw\|_{\vVhat}
 \le C\|\nabla\cdot\hat\vu\|_{\mathbf{L}^2(\widehat\Omega)}$; see Arnold et
 al.~\cite[Theorem~3.1]{ArnoldEtAl1988} and Brenner and
@@ -322,8 +337,9 @@ Sung~\cite[Lemma~2.1]{BrennerSung1992}.  Thus,
 \le C\|\ell\|_{\vV^*}\|\nabla\cdot\hat\vu\|_{\mathbf{L}^2(\widehat\Omega)},
 \]
 implying $\lambda\|\nabla\cdot\hat\vu\|_{\mathbf{L}^2(\Omega)}^2
-\le C\|\ell\|_{\vV^*}$, which completes the proof of the first
-inequality.  The second follows by elliptic regularity:
+\le C\|\ell\|_{\vV^*}$. Since $\|\nabla\cdot\vu\|=
+\|\nabla\cdot\hat\vu\|_{\mathbf{L}^2(\Omega)}$ the the proof of the first
+inequality is complete.  The second follows by elliptic regularity:
 $\|\vu\|_{\vH}=\|\hat\vu\|_{\vHhat}
 \le C\|L^2\hat\vf\|_{\mathbf{L}^2(\widehat\Omega)}=CL\|f\|$.
 \end{proof}
@@ -337,13 +353,14 @@ in~$\mathbb{R}^2$.
 For the finite element scheme, we introduce as usual a family of regular 
 quasi-uniform triangulations~$\mathcal{T}_h$ of the domain~$\Omega$ and let 
 $h=\max_{K\in \mathcal{T}_h}(h_K)$, where $h_{K}$ denotes the diameter of 
-the element $K$.  The space of polynomials with degree at most~$1$ is denoted  by~$P_1$, and the conforming finite element space is then defined by 
+the element~$K$.  The space of polynomials with degree at most~$1$ is denoted
+by~$P_1$, and the conforming finite element space is then defined by
 \[\vV_h=\{\,\vw_h \in {\bf V}:\text{$\vw_h |_K \in [P_1]^2$ for all $K \in \mathcal{T}_h$}\,\}.
 \]
 In the standard conforming FEM we seek $\vu_h \in  \vV_h$ such that
 $\calB(\vu_h, \vv_h) = \ell(\vv_h)$ for all $\vv_h \in  \vV_h$. To
 avoid locking when~$\lambda$ is large, more precisely,
-when~$\lambda$ larger than about~$h^{-1}$, we modify this scheme as
+when~$\lambda$ larger than about~$L/h$, we modify this scheme as
 follows: find $\vu_h \in  \vV_h$ such that
 \begin{equation}\label{FEM new}
 \calB_h(\vu_h,\vv_h)=\ell(\vv_h),\quad\text{for all $\vv_h\in\vV_h$},
@@ -357,28 +374,37 @@ that is,
 \end{equation*} 
 for $\lambda_h$ given by~\eqref{eq: lambda_h} below. The existence and
 uniqueness of the solution~$\vu_h$ of~\eqref{FEM new} is guaranteed because the
-operator $\calB_h$ is bounded and positive-definite on~$\vV_h$.
+operator $\calB_h$ is bounded and positive-definite on~$\vV_h$.  For future
+reference, we note that
+\begin{equation}\label{eq: B-B_h}
+\calB(\vw,\vv)-\calB_h(\vw,\vv)
+    =\int_\Omega (\lambda-\lambda_h)(\nabla\cdot\vw)(\nabla\cdot\vv)\,\ud\bsx
+    \quad\text{for all $\vw$, $\vv\in\vV$.}
+\end{equation}
+
 The map~$\bsx\mapsto\hat\bsx$ takes the triangulation of~$\Omega$ to a
 triangulation of~$\widehat\Omega$ with mesh size~$\hat h=h/L$, and we have
 the corresponding finite element space
 $\vVhat_h=\{\,\hat\vv_h:\vv_h\in\vV_h\,\}$, with $\hat\vu_h\in\vVhat_h$
 satisfying
 \[
-\calBhat(\hat\vu_h,\vv_h)=\hat\ell(\hat\vv_h)
+\calBhat_h(\hat\vu_h,\vv_h)=\hat\ell(\hat\vv_h)
 \quad\text{for $\hat\vv_h\in\vVhat_h$.}
 \]
+In the obvious way, $\calBhat_h$ is defined in the same way as~$\calBhat$
+in~\eqref{eq: ell B hat} except with~$\lambda_h$ in place of~$\lambda$.
 
 \section{Convergence analysis}\label{ConvAna}
 For the error analysis, we use a projection
-operator~$\Pi_{\hat h}:\vVhat\to\vVhat_h$ with
-the approximation property
+operator~$\pi_{\hat h}:\vVhat\to\vVhat_h$ having the approximation property
 \[
-\|\hat\vv-\Pi_{\hat h}\hat\vv\|_{\widehat\Omega}
-    +\hat h\|\nabla(\hat\vv-\Pi_{\hat h}\hat\vv)\|_{\widehat\Omega}
-    \le C\hat h^2\|\hat\vv\|_{\vHhat}.
+\|\hat\vv-\pi_{\hat h}\hat\vv\|_{\widehat\Omega}
+    +\hat h\|\nabla(\hat\vv-\pi_{\hat h}\hat\vv)\|_{\widehat\Omega}
+    \le C\hat h^2\|\hat\vv\|_{\vHhat},
 \]
-For the corresponding projection~$\Pi_h:\vV\to\vV_h$ given
-by~$\Pi_{\hat h}\hat v(\hat\bsx)=\Pi_hv(\bsx)$, it is easily verified that
+together with a corresponding projection~$\Pi_h:\vV\to\vV_h$ satisfying
+$\Pi_hv(\bsx)=\pi_{\hat h}\hat v(\hat\bsx)$.  Using the scaling properties
+described in Section~\ref{Sec: FEM} we find that
 \begin{equation} \label{projection estimate}
 \|\vv-\Pi_h\vv\|_\Omega+h\|\nabla(\vv-\Pi_h\vv)\|_\Omega
     \le CL^{-1}h^2\|\vv\|_{\vH},
@@ -401,21 +427,24 @@ $\|\vu_h-\Pi_h \vu\|_{\calB_h}^2\le C\bigl(\lambda_h h^2
     +(\lambda-\lambda_h)^2\lambda_h^{-1}L^2\lambda^{-2}\bigr)\|\vf\|^2$.
 \end{lemma}
 \begin{proof}
-From the weak formulation in \eqref{para weak} and the numerical scheme   in
-\eqref{FEM new}, we have the property
+From the weak formulation in~\eqref{para weak} and the numerical scheme
+in~\eqref{FEM new}, and using the identity~\eqref{eq: B-B_h} with $\vw=\vu$~and
+$\vv=\vv_h$, we have the property
 \begin{align}\label{equ:Gal ort}
-\calB_h(\vu-\vu_h, \vv_h) &= \calB_h(\vu, \vv_h)
-    -\calB_h(\vu_h,\vv_h)+\calB(\vu,\vv_h)-\calB(\vu,\vv_h) \nonumber \\
-&=\calB_h(\vu,\vv_h)-\calB(\vu,\vv_h)  \nonumber \\
-&=\int_\Omega(\lambda_h-\lambda)\nabla\cdot\vu\,\nabla\cdot\vv_h\,\ud\bsx
+\calB_h(\vu_h-\vu, \vv_h) &=\calB_h(\vu_h,\vv_h)-\calB_h(\vu,\vv_h)
+    =\ell(\vv_h)-\calB_h(\vu,\vv_h)
+    =\calB(\vu,\vv_h)-\calB_h(\vu,\vv_h)  \nonumber \\
+    &=\int_\Omega(\lambda-\lambda_h)\nabla\cdot\vu\,\nabla\cdot\vv_h\,\ud\bsx
 \quad\text{for all $\vv_h \in \vV_h$.}
 \end{align}
-Applying the Cauchy--Schwarz inequality, we obtain
+Since $\|\vu_h-\Pi_h \vu\|_{\calB_h}^2=\calB_h(\vu-\Pi_h\vu,\vu_h-\Pi_h\vu)
++\calB_h(\vu_h-\vu,\vu_h-\Pi_h\vu)$, by applying the Cauchy--Schwarz inequality
+and taking $\vv_h=\vu_h-\Pi_h\vu$ in~\eqref{equ:Gal ort}, we obtain
 \begin{multline*}
 \|\vu_h-\Pi_h \vu\|_{\calB_h}^2=\calB_h(\vu-\Pi_h\vu,\vu_h-\Pi_h\vu)
     +\int_\Omega(\lambda-\lambda_h)\,\nabla\cdot\vu\,\nabla\cdot
     (\vu_h-\Pi_h\vu)\,\ud\bsx\\
-    \le\tfrac14\|\vu_h-\Pi_h \vu\|_{\calB_h}^2+\|\vu-\Pi_h\vu\|_{\calB_h}^2
+    \le\|\vu-\Pi_h\vu\|_{\calB_h}^2+\tfrac14\|\vu_h-\Pi_h \vu\|_{\calB_h}^2
     +(\lambda-\lambda_h)^2\lambda_h^{-1}\|\nabla\cdot\vu\|^2
     +\tfrac{1}{4}\lambda_h\|\nabla\cdot(\vu_h-\Pi_h\vu)\|^2.
 \end{multline*}
@@ -426,8 +455,7 @@ Using $\lambda_h\|\nabla\cdot(\vu_h-\Pi_h\vu)\|^2
     +2(\lambda-\lambda_h)^2\lambda_h^{-1}\|\nabla\cdot\vu\|^2.
 \]
 To complete the proof, combine \eqref{projection estimate Bh}, the regularity
-results in Theorem~\ref{lem: vu bound}, and the inequality $\|\ell\|_{\vV^*}
-\le CL\|\vf\|$.
+results in Theorem~\ref{lem: vu bound}, and \eqref{eq: norm ell}.
 \end{proof}
 
 We now choose $\lambda_h$ so that the two terms in the lemma balance:
@@ -445,12 +473,12 @@ $\lambda_h$ by~\eqref{eq: lambda_h}.
 Then, there is a constant~$C$ depending on $\widehat\Omega$~and $\mu$, but
 independent of $\lambda$, $L$~and $h$, such that
 \begin{equation}\label{h1 error}
-\|\vu-\vu_h\|_{\calB_h}\le C(Lh)^{1/2}\|\vf\|.
+\|\vu_h-\vu\|_{\calB_h}\le C(Lh)^{1/2}\|\vf\|.
 \end{equation}
 Moreover, if $\calL:{\bf L}^2(\Omega) \to \R$ is a bounded  linear functional,
 so that $|\calL(\vw)|\le \|\calL\|\,\|\vw\|$, then
 \begin{equation}\label{convergence calL}
-|\calL(\vu_h)-\calL(\vu)|\le C(h+\lambda^{-1})\|\vf\|\|\calL\|.
+|\calL(\vu_h)-\calL(\vu)|\le CL(h+L\lambda^{-1})\|\vf\|\|\calL\|.
 \end{equation}
 \end{theorem}
 \begin{proof} 
@@ -461,7 +489,7 @@ Lemma~\ref{lem: balance terms},
 \begin{equation}\label{eq: uh Pih u}
 \|\vu_h-\Pi_h \vu\|_{\calB_h}^2 \le CLh\|\vf\|^2.
 \end{equation}
-Using this inequality together with~\eqref{projection estimate Bh} shows
+This inequality, together with~\eqref{projection estimate Bh}, shows
 \eqref{h1 error}.
 
 To show the second estimate~\eqref{convergence calL}, we replace $\ell$
@@ -484,7 +512,7 @@ function~$\mathbf{\Theta}_h\in\vV_h$ satisfying
 By repeating the arguments that led to~\eqref{h1 error}, and using
 \eqref{regulairty of u_L}, we obtain
 \begin{equation}\label{projection estimate ucalL}
-\|\vu_{\calL}-\mathbf{\Theta}_h\|_{\calB_h}\le C(Lh)^{1/2}\|\calL\|.
+\|\mathbf{\Theta}_h-\vu_{\calL}\|_{\calB_h}\le C(Lh)^{1/2}\|\calL\|.
 \end{equation}
 
 By \eqref{FEM new} and \eqref{weak form uL discrete}, we have
@@ -494,90 +522,87 @@ $\calL(\vu_h)=\calB_h(\mathbf{\Theta}_h,\vu_h)
 \eqref{para weak} imply that
 $\calL(\vu)=\calB(\vu_{\calL},\vu)=\calB(\vu,\vu_{\calL})$, so
 \[
-\calL(\vu)-\calL(\vu_h)=\calB(\vu,\vu_{\calL}-\mathbf{\Theta}_h).
+\calL(\vu_h)-\calL(\vu)=\calB(\vu,\mathbf{\Theta}_h-\vu_{\calL}).
 \]
-Notice that
-\[
-\calB(\vw,\vv)-\calB_h(\vw,\vv)
-    =\int_\Omega (\lambda-\lambda_h)(\nabla\cdot\vw)(\nabla\cdot\vv)\,\ud\bsx
-    \quad\text{for all $\vw$, $\vv\in\vV$,}
-\]
-so
-\[
-\calL(\vu)-\calL(\vu_h)
-    =\calB_h(\vu,\vu_{\calL}-{\bf\Theta}_h)
+Thus, taking $\vw=\vu$ and $\vv=\mathbf{\Theta}_h-\vu_{\calL}$ in the
+identity~\eqref{eq: B-B_h},
+\begin{equation}\label{eq: functional difference}
+\calL(\vu_h)-\calL(\vu)
+    =\calB_h(\vu,\mathbf{\Theta}_h-\vu_{\calL})
     +\int_{\Omega}(\lambda-\lambda_h)(\nabla\cdot\vu)
-        (\nabla \cdot(\vu_{\calL}-\mathbf{\Theta}_h))\,\ud\bsx.
-\]
+        (\nabla \cdot(\mathbf{\Theta}_h-\vu_{\calL}))\,\ud\bsx.
+\end{equation}
 By \eqref{weak form uL}~and \eqref{weak form uL discrete} it follows that
-\begin{equation}\label{uL relation}
-\begin{aligned}
-\calB_h(\vu_{\calL}-{\bf\Theta}_h,\vv_h)&=\calB(\vu_{\calL},\vv_h)
-   -\calB(\vu_{\calL},\vv_h)+\calB_h(\vu_{\calL},\vv_h)-\calL(\vv_h)\\
-   &=-\int_{\Omega}(\lambda-\lambda_h)
+\begin{align*}
+\calB_h(\mathbf{\Theta}_h-\vu_{\calL},\vv_h)
+    &=\calB_h(\mathbf{\Theta}_h,\vv_h)-\calB_h(\vu_{\calL},\vv_h)
+    =\calL(\vv_h)-\calB_h(\vu_{\calL},\vv_h)
+    =\calB(\vu_{\calL},\vv_h)-\calB_h(\vu_{\calL},\vv_h)\\
+   &=\int_{\Omega}(\lambda-\lambda_h)
     (\nabla\cdot\vu_{\calL})(\nabla\cdot\vv_h)\,\ud\bsx
     \quad\text{for all $\vv_h \in\vV_h$.}
-\end{aligned}
-\end{equation}
+\end{align*}
 In particular, choosing $\vv_h=\vu_h$, we see that
 \begin{align*}
-\calB_h(\vu,\vu_{\calL}-\mathbf{\Theta}_h)
-    &=\calB_h(\vu-\vu_h,\vu_{\calL}-\mathbf{\Theta}_h)
-    +\calB_h(\vu_{\calL}-\mathbf{\Theta}_h,\vu_h)\\
-    &=\calB_h(\vu-\vu_h,\vu_{\calL}-{\bf\Theta}_h)
-    -\int_{\Omega} (\lambda-\lambda_h)
+\calB_h(\vu,\mathbf{\Theta}_h-\vu_{\calL})
+    &=\calB_h(\mathbf{\Theta}_h-\vu_{\calL},\vu-\vu_h)
+    +\calB_h(\mathbf{\Theta}_h-\vu_{\calL},\vu_h)\\
+    &=\calB_h(\vu-\vu_h,\mathbf{\Theta}_h-\vu_{\calL})
+    +\int_{\Omega} (\lambda-\lambda_h)
     (\nabla\cdot\vu_{\calL})(\nabla\cdot\vu_h)\,\ud\bsx
 \end{align*}
-and hence
-\begin{multline}\label{change in lambda 2}
-\calL(\vu)-\calL(\vu_h)
-    =\calB_h(\vu-\vu_h,\vu_{\calL}-\mathbf{\Theta}_h)
+and hence by~\eqref{eq: functional difference},
+\begin{align*}
+\calL(\vu_h)-\calL(\vu)
+    &=\calB_h(\vu-\vu_h,\mathbf{\Theta}_h-\vu_{\calL})
 +\int_{\Omega}(\lambda-\lambda_h)
-    (\nabla\cdot\vu)\nabla\cdot(\vu_{\calL}-\mathbf{\Theta}_h)\,\ud\bsx\\
-    +\int_{\Omega}(\lambda-\lambda_h)(\nabla\cdot\vu_{\calL})\bigl[
-    \nabla\cdot(\vu-\vu_h)-\nabla\cdot\vu\bigr]\,\ud\bsx.
-\end{multline}
+    (\nabla\cdot\vu)\nabla\cdot(\mathbf{\Theta}_h-\vu_{\calL})\,\ud\bsx\\
+&\qquad{}+\int_{\Omega}(\lambda-\lambda_h)(\nabla\cdot\vu_{\calL})\bigl[
+    \nabla\cdot(\vu_h-\vu)+\nabla\cdot\vu\bigr]\,\ud\bsx.
+\end{align*}
 Theorem~\ref{lem: vu bound}~and \eqref{regulairty of u_L} imply that
 $\|\nabla\cdot\vu\|\le C\lambda^{-1}L\|\vf\|$~and
 $\|\nabla\cdot\vu_{\calL}\|\le CL\lambda^{-1}\|\calL\|$. Thus, from the achieved
 estimates in \eqref{h1 error}~and \eqref{projection estimate ucalL}, and
-using $\|\nabla\cdot\vv\|\le C\lambda_h^{-1/2}\|\vv\|_{\calB_h}$,
+using $\|\nabla\cdot\vv\|\le\lambda_h^{-1/2}\|\vv\|_{\calB_h}$,
 \begin{align*}
 |\calL(\vu)-\calL(\vu_h)|
-    &\le\|\vu-\vu_h\|_{\calB_h}\|\vu_{\calL}-\Theta_h\|_{\calB_h}
-    +C\lambda \|\nabla \cdot\vu\|\|\nabla\cdot(\vu_{\calL}-\Theta_h)\|\\
-    &\qquad{}+C\lambda\|\nabla\cdot\vu_{\calL}\|
-    \bigl[\|\nabla\cdot(\vu-\vu_h)\|+\|\nabla \cdot\vu\|\bigr]\\
-    &=C\bigl((Lh)^{1/2}\|\vf\|\bigr)\bigl((Lh)^{1/2}\|\calL\|\bigr)
+    &\le\|\vu-\vu_h\|_{\calB_h}\|\mathbf{\Theta}_h-\vu_{\calL}\|_{\calB_h}
+    +\lambda \|\nabla\cdot\vu\|
+        \|\nabla\cdot(\mathbf{\Theta}_h-\vu_{\calL})\|\\
+    &\qquad{}+\lambda\|\nabla\cdot\vu_{\calL}\|
+    \bigl[\|\nabla\cdot(\vu_h-\vu)\|+\|\nabla \cdot\vu\|\bigr]\\
+    &\le C\bigl((Lh)^{1/2}\|\vf\|\bigr)\bigl((Lh)^{1/2}\|\calL\|\bigr)
     +C(L\|\vf\|)\bigl(\lambda_h^{-1/2}(Lh)^{1/2}\|\calL\|\bigr)\\
     &\qquad{}+C(L\|\calL\|)\bigl[
     \lambda_h^{-1/2}(Lh)^{1/2}\|\vf\|+\lambda^{-1}L\|\vf\|\bigr]\\
     &\le C\bigr(Lh+L\lambda_h^{-1/2}(Lh)^{1/2}+L^2\lambda^{-1}\bigr)
         \|\calL\|\|\vf\|.
 \end{align*}
-Using $\lambda_h^{-1/2}h^{1/2}\le\frac12\lambda_h^{-1}+\tfrac12h$ and
-$\lambda_h^{-1}=h+\lambda^{-1}$, the estimate~\eqref{convergence calL}
+Using $L\lambda_h^{-1/2}(Lh)^{1/2}\le\frac12L^2\lambda_h^{-1}+\tfrac12Lh$ and
+$L^2\lambda_h^{-1}=Lh+L^2\lambda^{-1}$, the estimate~\eqref{convergence calL}
 follows at once.
 \end{proof}
 
 \begin{corollary}\label{cor: L2 H1 errors}
 There is a constant~$C$, independent of $\lambda$, such that
 \[
-\|\vu-\vu_h\|\le C(h+\lambda^{-1})\|\vf\|
-\quad\text{and}\quad\|\vu-\vu_h\|_{\vV}\le Ch^{1/2}\|\vf\|.
+\|\vu_h-\vu\|\le CL(h+L\lambda^{-1})\|\vf\|
+\quad\text{and}\quad\|\vu_h-\vu\|_{\vV}\le C(Lh)^{1/2}\|\vf\|.
 \]
 \end{corollary}
 \begin{proof}
 By choosing 
-$\calL(\vv)=\int_\Omega(\vu-\vu_h)\cdot \vv\,\ud\bsx$ in~\eqref{convergence calL}, we have
+$\calL(\vv)=\int_\Omega(\vu_h-\vu)\cdot \vv\,\ud\bsx$
+in~\eqref{convergence calL}, we have
 \[
-\|\vu-\vu_h\|^2=\calL(\vu-\vu_h)=\calL(\vu)-\calL(\vu_h)\le Ch\|\vf\|\|\vu-\vu_h\|,
+\|\vu_h-\vu\|^2=\calL(\vu_h-\vu)=\calL(\vu_h)-\calL(\vu)\le
+CL(h+L\lambda^{-1})\|\vf\|\|\vu_h-\vu\|,
 \]
-implying that $\|\vu-\vu_h\|\le C(h+\lambda^{-1})\|\vf\|$.  By
-\eqref{eq: coer B}~and \eqref{h1 error},
+implying the first estimate. By \eqref{eq: coer B}~and \eqref{h1 error},
 \[
-\|\vu-\vu_h\|_{\vV}^2\le C\|\varepsilon(\vu-\vu_h)\|^2
-\le C\|\vu-\vu_h\|_{\calB_h}^2\le Ch\|\vf\|^2,
+\|\vu_h-\vu\|_{\vV}^2\le C\|\varepsilon(\vu_h-\vu)\|^2
+\le C\|\vu_h-\vu\|_{\calB_h}^2\le CLh\|\vf\|^2,
 \]
 implying the second estimate.
 \end{proof}
@@ -592,17 +617,20 @@ simplify to yield the bounds
 \]
 with
 \[
-|\calL(\vu_h)-\calL(\vu)|\le C\lambda h^2\|\calL\|\|\vf\|
-\quad\text{and}\quad
+|\calL(\vu_h)-\calL(\vu)|=|\calB(\vu-\vu_h,\mathbf{\Theta}_h-\vu_{\calL})|
+    \le C\lambda h^2\|\calL\|\|\vf\|
+\]
+and
+\[
 \|\vu_h-\vu\|\le C\lambda h^2\|\vf\|.
 \]
 It is easily verified that
 \[
-h+\lambda^{-1}<\lambda h^2\quad\text{if and only if}\quad
-\lambda>\frac{1+\sqrt{5}}{2h},
+L(h+L\lambda^{-1})<\lambda h^2\quad\text{if and only if}\quad
+\lambda>\frac{1+\sqrt{5}}{2}\,\frac{L}{h},
 \]
 so the modification based on~\eqref{eq: lambda_h} should be
-advantageous once $\lambda$ is larger than about~$h^{-1}$.
+advantageous once $\lambda$ is larger than a modest multiple of~$L/h$.
 \end{remark}
 \begin{remark}
 To discuss mixed boundary conditions, let $\boldsymbol{n}$ denote the outward 
@@ -661,163 +689,6 @@ Corollary~\ref{cor: L2 H1 errors}.}
 \end{remark}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Scaling effects}
-In the foregoing analysis, different terms will scale differently with the size
-of~$\Omega$.  To obtain a scale-invariant formula for~$\lambda_h$, let
-$L=\diam(\Omega)$ denote the diameter of~$\Omega$,
-and define
-\[
-\widehat\Omega=L^{-1}\Omega=\{\,L^{-1}\bsx:\bsx\in\Omega\,\}
-\]
-so that $\diam(\widehat\Omega)=1$.  We write the $\mathbf{L}^2$-norms on
-$\Omega$~and $\widehat\Omega$ by $\|\cdot\|_\Omega$ and
-$\|\cdot\|_{\widehat\Omega}$, respectively. Define the Sobolev seminorm
-$|\vv|_{r,\Omega}=\bigl(\sum_{|\alpha|=r}
-\|\partial^\alpha\vv\|_{\Omega}^2\bigr)^{1/2}$,
-and equip $\vV$ and $\vH$ with the norms given by
-\begin{equation}\label{eq: V H norms}
-\|\vv\|_{\vV}^2=L^{-2}\|\vv\|_\Omega^2+|\vv|_{1,\Omega}^2
-\quad\text{and}\quad
-\|\vv\|_{\vH}^2=\|\vv\|_{\vV}^2+L^2|\vv|_{2,\Omega}^2.
-\end{equation}
-If $\vv(\bsx)=\hat\vv(\hat\bsx)$ for $\bsx=L\hat\bsx$, then
-$\partial_i\vv(\bsx)=L^{-1}\partial_i\hat\vv(\hat\bsx)$ and so
-$|\vv|_{r,\Omega}=L^{1-r}|\hat\vv|_{r,\widehat\Omega}$.  Thus, if the spaces
-$\vVhat=[H^1_0(\widehat\Omega)]^2$ and $\vHhat=[H^2(\widehat\Omega)]^2$ are
-equipped with the norms given by
-\[
-\|\hat\vv\|_{\vVhat}^2=\|\hat\vv\|_{\widehat\Omega}^2
-    +|\hat\vv|_{1,\widehat\Omega}^2
-\quad\text{and}\quad
-\|\hat\vv\|_{\vHhat}^2=\|\hat\vv\|_{\vVhat}^2
-    +|\hat\vv|_{2,\widehat\Omega}^2.
-\]
-then
-\[
-\|\vv\|_\Omega=L\|\hat\vv\|_{\widehat\Omega},\qquad
-\|\vv\|_{\vV}=\|\hat\vv\|_{\vVhat},\qquad
-\|\vv\|_{\mathbf{H}}=\|\hat\vv\|_{\vHhat}.
-\]
-Since $\veps(\vv)=L^{-1}\veps(\hat\vv)$ and
-$\nabla\cdot\vv=L^{-1}\nabla\cdot\hat\vv$,
-if $\vu\in\vV$ satisfies \eqref{para weak}, then $\hat\vu\in\vVhat$ will
-satisfy
-\[
-\calBhat(\hat\vu,\hat\vv)=\hat\ell(\hat\vv)
-\quad\text{for all $\hat\vv\in\vVhat$,}
-\]
-where
-\[
-\hat\ell(\hat\vv) = \int_{\widehat\Omega}L^2\hat\vf\cdot\hat\vv\,\ud\hat\bsx
-\quad\text{and}\quad
-\calBhat(\hat\vu,\hat\vv)=\int_{\widehat\Omega}
-[2\mu\,\veps(\hat\vu):\veps(\hat\vv)+\lambda(\nabla\cdot\hat\vu)
-    (\nabla\cdot\hat\vv)]\,\ud\hat\bsx,
-\]
-because $\calB(\vu,\vv)=\calBhat(\hat\vu,\hat\vv)$ and
-$\ell(\vv)=\hat\ell(\hat\vv)$. Applying Theorem~\ref{lem: vu bound}
-to~$\hat\vu$, we have
-\[
-\|\hat\vu\|_{\vVhat}+\lambda\|\nabla\cdot\hat\vu\|_{\widehat\Omega}
-    \le C\|\hat\ell\|_{\vVhat^*}
-\quad\text{and}\quad
-\|\hat\vu\|_{\vHhat}\le C\|L^2\hat\vf\|_{\widehat\Omega}.
-\]
-It follows from $\ell(\vv)=\hat\ell(\hat\vv)$~and
-$\|\vv\|_{\vV}=\|\hat\vv\|_{\vVhat}$ that
-$\|\ell\|_{\vV^*}=\|\hat\ell\|_{\vVhat^*}$.  Moreover,
-$\|\vv\|_\Omega\le L\|v\|_{\vV}$, so
-\[
-\|\vu\|_{\vV}+\lambda\|\nabla\cdot\vu\|_\Omega\le C\|\ell\|_{\vV^*}
-\le CL\|f\|_\Omega
-\quad\text{and}\quad
-\|\vu\|_{\vH}\le CL\|\vf\|_\Omega,
-\]
-with~$C$ independent of~$L$.
-
-The map~$\bsx\mapsto\hat\bsx$ takes the triangulation of~$\Omega$ to a
-triangulation of~$\widehat\Omega$ with mesh size~$\hat h=h/L$.  Defining
-projection $\Pi_{\hat h}\hat v(\hat\bsx)=\Pi_hv(\bsx)$, it is easily verified
-that the approximation property
-\[
-\|\hat\vv-\Pi_{\hat h}\hat\vv\|_{\widehat\Omega}
-    +\hat h\|\nabla(\hat\vv-\Pi_{\hat h}\hat\vv)\|_{\widehat\Omega}
-    \le C\hat h^2\|\hat\vv\|_{\vHhat}
-\]
-implies that
-\[
-\|\vv-\Pi_h\vv\|_\Omega+h\|\nabla(\vv-\Pi_h\vv)\|_\Omega
-    \le CL^{-1}h^2\|\vv\|_{\vH},
-\]
-with the same constant~$C$.  Thus, arguing as in~\eqref{projection estimate Bh},
-\[
-\|\vu-\Pi_h\vu\|_{\calB_h}^2
-    \le C\lambda_h\|\nabla(\vv-\Pi_h\vv)\|_\Omega^2
-    \le C\lambda_h(L^{-1}h)^2\|\vu\|_{\vH}^2
-    \le C\lambda_hh^2\|\vf\|_\Omega^2,
-\]
-with $\|\nabla\cdot\vu\|_\Omega\le CL\lambda^{-1}\|\vf\|_{\Omega}$,
-so instead of~\eqref{eq: balance terms} we obtain
-\begin{align*}
-\|\vu_h-\Pi_h \vu\|_{\calB_h}^2&\le C\bigl(\lambda_hh^2
-    +(\lambda-\lambda_h)^2\lambda_h^{-1}L^2\lambda^{-2}\bigr)\|\vf\|^2\\
-&=CL^2\bigl(\lambda_h\hat h^2
-    +(\lambda-\lambda_h)^2\lambda_h^{-1}\lambda^{-2}\bigr)\|\vf\|_\Omega^2,
-\end{align*}
-now with~$C$ independent of~$L$.  By putting
-\begin{equation}\label{eq: lambda_h L}
-\lambda_h=\frac{\lambda}{1+\lambda h/L}
-\end{equation}
-we find $\lambda_h\hat h^2=(\lambda-\lambda_h)^2\lambda_h^{-1}L^2\lambda^{-2}
-=\lambda\hat h^2/(1+\lambda\hat h)\le\hat h$ and hence
-\[
-\|\vu_h-\Pi_h\vu\|_{\calB_h}^2\le CL^2\hat h\|\vf\|_\Omega^2
-    =CLh\|\vf\|_\Omega^2.
-\]
-Since $\lambda_hh^2=L^2\lambda_h\hat h^2\le L^2\hat h=Lh$, it follows that
-\[
-\|\vu_h-\vu\|\le C(Lh)^{1/2}\|\vf\|_\Omega.
-\]
-
-Alternatively, we can derive the same estimate by applying
-Theorem~\ref{Convergence theorem} to~$\hat\vu_h$ and concluding that
-\[
-\|\vu_h-\vu\|_{\calB_h}=\|\hat\vu_h-\hat\vu\|_{\calBhat_h}
-    \le C\hat h^{1/2}\|L^2\hat f\|_{\widehat\Omega}=C(Lh)^{1/2}\|f\|_\Omega.
-\]
-Likewise, by defining $\widehat\calL(\hat\vv)=\calL(\vv)$ and
-applying \eqref{convergence calL} to~$\hat\vu_h$, we have
-\[
-|\calL(\vu_h)-\calL(\vu)|=|\widehat\calL(\hat\vu_h)-\widehat\calL(\hat\vu)|
-    \le C(\hat h+\lambda^{-1})\|\hat\vf\|_{\widehat\Omega}\|\widehat\calL\|.
-\]
-The inequality $|\widehat\calL(\hat\vv)|\le\|\calL\|\|\vv\|_\Omega
-=\|\calL\|L\|\hat\vv\|_{\widehat\Omega}$ implies that
-$\|\widehat\calL\|\le L\|\calL\|$, whereas
-$\|\hat\vf\|_{\widetilde\Omega}=L^{-1}\|\vf\|_\Omega$, so
-\[
-|\calL(\vu_h)-\calL(\vu)|\le C\biggl(\frac{h}{L}+\frac{1}{\lambda}\biggr)
-    \|\vf\|\|\calL\|.
-\]
-Similarly, by applying Corollary~\ref{cor: L2 H1 errors} to $\hat\vu_h$,
-\[
-\|\vu_h-\vu\|_\Omega=L\|\hat\vu_h-\hat\vu\|_{\widehat\Omega}
-    \le CL(\hat h+\lambda^{-1})\|L^2\hat f\|_{\widehat\Omega}
-\]
-and
-\[
-\|\vu_h-\vu\|_{\vV}=\|\hat\vu_h-\hat\vu\|_{\vVhat}
-    \le C\hat h^{1/2}\|L^2\hat f\|_{\widehat\Omega}.
-\]
-Thus,
-\[
-\|\vu_h-\vu\|_\Omega\le CL^2\biggl(\frac{h}{L}+\frac{1}{\lambda}\biggr)
-    \|\vf\|_\Omega
-\quad\text{and}\quad
-\|\vu_h-\vu\|_{\vV}\le C(Lh)^{1/2}\|\vf\|_\Omega.
-\]
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical experiments}\label{Sec: Numeric}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In this section, we illustrate the theoretical convergence results. Based on 
@@ -825,10 +696,9 @@ Corollary~\ref{cor: L2 H1 errors}, we expect to observe $O(h)$~and $O(h^{1/2})$
 convergence rates in the ${\bf L}^2(\Omega)$-norm for ${\bf u}$~and
 $\nabla\mathbf{u}$, respectively, uniformly in~$\lambda$, provided that all the
 imposed assumptions are  satisfied.   The Julia code used in these experiments
-is available online~\cite{McLean2024}.  We used the scaled version
-of~$\lambda_h$ defined in~\eqref{eq: lambda_h L} with~$L=\diam(\Omega)$.
+is available on GitHub~\cite{McLean2024}.
 
-\paragraph{Example 1.} We chose  $\Omega=(0,\pi)^2$ and chose the body force so
+\paragraph{Example 1.} For~$\Omega=(0,\pi)^2$, we chose the body force so
 that the exact solution is
 \[
 \vu(\boldsymbol{x})=\begin{bmatrix}  u_1(x_1,x_2)\\  u_2(x_1,x_2)\end{bmatrix}
@@ -839,25 +709,25 @@ that the exact solution is
 \quad\bsx=(x_1,x_2).
 \]
 Notice $\vu=\mathbf{0}$ on~$\partial\Omega$.  We used a family of unstructured
-triangulations obtained by uniform refinement of an initial coarse mesh.
-Table~\ref{tab: L2 errors} compares the errors and convergence rates in the
-${\bf L^2}(\Omega)$-norm of the standard conforming, piecewise-linear
-Galerkin FEM (using the original bilinear form~$\calB$) with our modified
-conforming scheme~\eqref{FEM new} (using $\calB_h$ depending on~$\lambda_h$).
-The number of unknowns in the linear system for each mesh is denoted by~$N_h$.
-As~$\lambda$ increases from~$100$ to~$100{,}000$ the material becomes more
-nearly incompressible and, as expected, the standard method exhibits poor
-convergence. By contrast, our new method achieves $O(h)$ convergence uniformly
-in~$\lambda$.
+triangulations obtained by uniform refinement of an initial coarse mesh
+with~$h=0.478$. Table~\ref{tab: L2 errors} compares the errors and convergence
+rates in the ${\bf L^2}(\Omega)$-norm of the standard conforming,
+piecewise-linear Galerkin FEM (using the original bilinear form~$\calB$) with
+our modified conforming scheme~\eqref{FEM new} (using $\calB_h$ depending
+on~$\lambda_h$). The number of unknowns in the linear system for each mesh is
+denoted by~$N_h$. As~$\lambda$ increases from~$100$ to~$100{,}000$ the material
+becomes more nearly incompressible and, as expected, the standard method
+exhibits poor convergence. By contrast, our new method achieves $O(h)$
+convergence uniformly in~$\lambda$.
    
 Table~\ref{tab: H1 errors} compares the errors in~$\nabla {\bf u}$  for the two
 methods.  Once again, our new method is more accurate. In fact, it seems to
 achieve $O(h)$ convergence, implying that the second error bound in
-Corollary~\ref{cor: L2 H1 errors} is not sharp.
+Corollary~\ref{cor: L2 H1 errors} is not sharp in this case.
 
 \begin{table}
 %\newcommand{\Error}{\textrm{Error}}
-\newcommand{\Error}{$\|\vu-\vu_h\|$}
+\newcommand{\Error}{$\|\vu_h-\vu\|$}
 \newcommand{\Rate}{\textrm{Rate}}
 \renewcommand{\arraystretch}{1.2}
 \caption{Errors and convergence rates for ${\bf u}$ in Example~1.}
@@ -920,7 +790,7 @@ $N_h$&$h$&\Error&\Rate&\Error&\Rate&$\lambda_h$\\
 
 \begin{table}
 %\newcommand{\Error}{\textrm{Error}}
-\newcommand{\Error}{$\|\nabla\vu-\nabla\vu_h\|$}
+\newcommand{\Error}{$\|\nabla\vu_h-\nabla\vu\|$}
 \newcommand{\Rate}{\textrm{Rate}}
 \renewcommand{\arraystretch}{1.2}
 \caption{Errors and convergence rates for $\nabla \vu$ in Example~1.}
@@ -1022,10 +892,10 @@ method~\eqref{FEM new}.}\label{fig: deformed mesh}
 displacement~$u_2(A)$ for each choice of the bilinear form.}
 \label{fig: benchmark}
 \end{figure}
-\paragraph{Example 2.} (Cook’s membrane problem \cite{Cook1974}) This is a
+\paragraph{Example 2.} (Cook’s membrane problem \cite{Cook1974}.) This is a
 benchmark problem for linear elasticity which combines bending and shearing.  As
 illustrated in Figure~\ref{fig: benchmark problem}, $\Omega$ is the convex
-domain formed by connecting the vertices $(0,0)$, $(48,44)$, $(48,60)$, and
+polygon formed by connecting the vertices $(0,0)$, $(48,44)$, $(48,60)$, and
 $(0,44)$. The left-hand side of~$\Omega$ is clamped (that is,
 $\vu=\mathbf{0}$), and a constant shear load in the vertical direction is
 applied on the right-hand side, indicated by the red arrow: $\vsigma \vn =(0,g)$
