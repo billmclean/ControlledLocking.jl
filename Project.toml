@@ -6,3 +6,6 @@ version = "0.1.0"
 [deps]
 SimpleFiniteElements = "125632e7-bef4-4648-bc1f-71b5efcf8068"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
+
+[compat]
+SimpleFiniteElements = "0.1.1"
