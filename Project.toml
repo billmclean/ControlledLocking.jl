@@ -9,8 +9,4 @@ SimpleFiniteElements = "125632e7-bef4-4648-bc1f-71b5efcf8068"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [compat]
-<<<<<<< HEAD
 SimpleFiniteElements = "0.1.1"
-=======
-Plots = "1.40.19"
->>>>>>> f7422dded09af51da1d5011dd30e1642dd86a1ae
