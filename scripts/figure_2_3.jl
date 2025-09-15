@@ -21,10 +21,11 @@ k = 2
 dof = DegreesOfFreedom(mesh[k], essential_bcs)
 std_u1h, std_u2h = numerical_solution(λ, μ, λ, g, dof)
 h = max_elt_diameter(mesh[k])
-λₕ = λ / ( 1 + λ * h / diam_Ω )
+λₕ = λ * μ / ( μ + λ * h / diam_Ω )
+@printf("\th = %0.3f, λₕ = %0.3f\n", h, λₕ)
 ctrl_u1h, ctrl_u2h = numerical_solution(λ, μ, λₕ, g, dof)
 
-figure(1, figsize=(11,5))
+figure(2, figsize=(11,5))
 std_dof = deformed_mesh(std_u1h, std_u2h, dof)
 std_x, std_y, std_triangles = gmsh2pyplot(std_dof)
 ctrl_dof = deformed_mesh(ctrl_u1h, ctrl_u2h, dof)
@@ -67,7 +68,7 @@ for k = 1:num_solutions
     ctrl_u1_A[k], ctrl_u2_A[k] = selected_displacement(ctrl_u1h, ctrl_u2h, dof)
 end
 
-figure(2)
+figure(3)
 semilogx(Nₕ, ctrl_u2_A, "o-", 
 	 Nₕ, std_u2_A, "x-", 
 	[Nₕ[1], Nₕ[end]], [u2_A, u2_A], "k-")
