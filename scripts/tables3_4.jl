@@ -37,11 +37,6 @@ start = time()
 	    H1err[row,block,1] = numerical_errors(Λ[block], Λ[block], dof[row]) 
 	else
 	    Λₕ[row,block] = reduced_Λ(h[row], Λ[block], diam_Ω, μ_bar)
-#		λ[block] / ( 1 + λ[block] * h[row] / diam_Ω )
-#            d = diam_Ω / h[row]
-#	    λₕ[row,block] = λ[block] > d ? d : λ[block]
-#            α = min(1, log(d)/log(λ[block]))
-#	    λₕ[row,block] = λ[block]^α
 	    L2err[row,block,2], 
 	    H1err[row,block,2] = numerical_errors(
                                   Λ[block], Λₕ[row,block], dof[row]) 
@@ -57,7 +52,7 @@ function print_table(io::IO, err::Array{Float64},
     @printf(io, "\n%s\n\n", title)
     @printf(io, "%12s      %8s           %10s\n", "", "Standard", "Controlled")
     @printf(io, "%6s  %5s  %8s  %5s    %8s  %5s  %5s\n\n",
-	    "Nₕ", "h", "error", "rate", "error", "rate", "λₕ")
+	    "Nₕ", "h", "error", "rate", "error", "rate", "Λₕ")
     for row = 1:nrows
         Nₕ = 2 * dof[row].num_free
 	@printf(io, "%6d& %5.3f& ", Nₕ, h[row])
@@ -75,7 +70,7 @@ function print_table(io::IO, err::Array{Float64},
     end
 end
 
-output_file = "table3.txt"
+output_file = "tables3_4_output.txt"
 @printf("Writing output to %s\n", output_file)
 open(output_file, "w") do io
     @printf(io, "Output from tables3.jl\n")

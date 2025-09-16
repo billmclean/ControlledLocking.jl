@@ -37,11 +37,6 @@ start = time()
 	    H1err[row,block,1] = numerical_errors(λ[block], λ[block], dof[row]) 
 	else
 	    λₕ[row,block] = reduced_λ(h[row], λ[block], diam_Ω)
-#		λ[block] / ( 1 + λ[block] * h[row] / diam_Ω )
-#            d = diam_Ω / h[row]
-#	    λₕ[row,block] = λ[block] > d ? d : λ[block]
-#            α = min(1, log(d)/log(λ[block]))
-#	    λₕ[row,block] = λ[block]^α
 	    L2err[row,block,2], 
 	    H1err[row,block,2] = numerical_errors(
                                   λ[block], λₕ[row,block], dof[row]) 
